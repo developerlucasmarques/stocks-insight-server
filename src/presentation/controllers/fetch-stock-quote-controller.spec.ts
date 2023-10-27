@@ -3,7 +3,7 @@ import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchStockQuoteController } from './fetch-stock-quote-controller'
 import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
-import type { FetchQuote, FetchQuoteResponse } from '@/domain/contracts/fetch-quote'
+import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts/fetch-stock-quote'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
@@ -28,9 +28,9 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
-const makeFetchQuote = (): FetchQuote => {
-  class FetchQuoteStub implements FetchQuote {
-    async perform (stockSymbol: string): Promise<FetchQuoteResponse> {
+const makeFetchStockQuote = (): FetchStockQuote => {
+  class FetchQuoteStub implements FetchStockQuote {
+    async perform (stockSymbol: string): Promise<FetchStockQuoteResponse> {
       return await Promise.resolve(right(makeFakeStockQuote()))
     }
   }
@@ -40,14 +40,14 @@ const makeFetchQuote = (): FetchQuote => {
 type SutTypes = {
   sut: FetchStockQuoteController
   validationStub: Validation
-  fetchQuoteStub: FetchQuote
+  fetchStockQuoteStub: FetchStockQuote
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const fetchQuoteStub = makeFetchQuote()
-  const sut = new FetchStockQuoteController(validationStub, fetchQuoteStub)
-  return { sut, validationStub, fetchQuoteStub }
+  const fetchStockQuoteStub = makeFetchStockQuote()
+  const sut = new FetchStockQuoteController(validationStub, fetchStockQuoteStub)
+  return { sut, validationStub, fetchStockQuoteStub }
 }
 
 describe('FetchStockQuote Controller', () => {
@@ -76,32 +76,32 @@ describe('FetchStockQuote Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it('Should call FetchQuote with correct stock symbol', async () => {
-    const { sut, fetchQuoteStub } = makeSut()
-    const performSpy = jest.spyOn(fetchQuoteStub, 'perform')
+  it('Should call FetchStockQuote with correct stock symbol', async () => {
+    const { sut, fetchStockQuoteStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockQuoteStub, 'perform')
     await sut.handle(makeFakeRequest())
     expect(performSpy).toHaveBeenCalledWith('any_stock_symbol')
   })
 
-  it('Should return 404 if FetchQuote returns StockQuoteNotFoundError', async () => {
-    const { sut, fetchQuoteStub } = makeSut()
-    jest.spyOn(fetchQuoteStub, 'perform').mockReturnValueOnce(
+  it('Should return 404 if FetchStockQuote returns StockQuoteNotFoundError', async () => {
+    const { sut, fetchStockQuoteStub } = makeSut()
+    jest.spyOn(fetchStockQuoteStub, 'perform').mockReturnValueOnce(
       Promise.resolve(left(new StockQuoteNotFoundError('any_stock_symbol')))
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(notFound(new StockQuoteNotFoundError('any_stock_symbol')))
   })
 
-  it('Should return 500 if FetchQuote throws', async () => {
-    const { sut, fetchQuoteStub } = makeSut()
-    jest.spyOn(fetchQuoteStub, 'perform').mockReturnValueOnce(
+  it('Should return 500 if FetchStockQuote throws', async () => {
+    const { sut, fetchStockQuoteStub } = makeSut()
+    jest.spyOn(fetchStockQuoteStub, 'perform').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it('Should return 200 if FetchQuote is a success', async () => {
+  it('Should return 200 if FetchStockQuote is a success', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(ok(makeFakeStockQuote()))
