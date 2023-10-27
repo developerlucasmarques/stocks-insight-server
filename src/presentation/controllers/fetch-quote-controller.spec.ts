@@ -2,7 +2,7 @@ import { type Either, right, left } from '@/shared/either'
 import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchQuoteController } from './fetch-quote-controller'
-import { badRequest, notFound } from '../helpers/http-helper'
+import { badRequest, notFound, serverError } from '../helpers/http-helper'
 import type { FetchQuote, FetchQuoteResponse } from '@/domain/contracts/fetch-quote'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
@@ -65,6 +65,15 @@ describe('FetchQuote Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 500 if Validation throws', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   it('Should call FetchQuote with correct stock symbol', async () => {
