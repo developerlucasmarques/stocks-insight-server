@@ -3,7 +3,7 @@ import type { FetchQuoteBySymbolApi } from '../contracts/api/fetch-quote-by-symb
 import { left, right } from '@/shared/either'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
-export class FetchQuoteUseCase implements FetchQuote {
+export class FetchStockQuoteUseCase implements FetchQuote {
   constructor (private readonly fetchQuoteBySymbolApi: FetchQuoteBySymbolApi) {}
 
   async perform (stockSymbol: string): Promise<FetchQuoteResponse> {

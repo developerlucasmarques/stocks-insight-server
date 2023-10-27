@@ -1,6 +1,6 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { FetchQuoteBySymbolApi } from '../contracts/api/fetch-quote-by-symbol-api'
-import { FetchQuoteUseCase } from './fetch-quote-usecase'
+import { FetchStockQuoteUseCase } from './fetch-stock-quote-usecase'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
 const makeFakeStockQuote = (): StockQuote => ({
@@ -19,20 +19,20 @@ const makeFetchQuoteBySymbolApi = (): FetchQuoteBySymbolApi => {
 }
 
 type SutTypes = {
-  sut: FetchQuoteUseCase
+  sut: FetchStockQuoteUseCase
   fetchQuoteBySymbolApiStub: FetchQuoteBySymbolApi
 }
 
 const makeSut = (): SutTypes => {
   const fetchQuoteBySymbolApiStub = makeFetchQuoteBySymbolApi()
-  const sut = new FetchQuoteUseCase(fetchQuoteBySymbolApiStub)
+  const sut = new FetchStockQuoteUseCase(fetchQuoteBySymbolApiStub)
   return {
     sut,
     fetchQuoteBySymbolApiStub
   }
 }
 
-describe('FetchQuote UseCase', () => {
+describe('FetchStockQuote UseCase', () => {
   it('Should call FetchQuoteBySymbolApi with correct stock symbol', async () => {
     const { sut, fetchQuoteBySymbolApiStub } = makeSut()
     const fetchQuoteSpy = jest.spyOn(fetchQuoteBySymbolApiStub, 'fetchQuote')
