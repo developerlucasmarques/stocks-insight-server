@@ -49,4 +49,10 @@ describe('StockSymbol Validation', () => {
     const promise = sut.validate(makeInput())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return null if FetchStockSymbolCache is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.validate(makeInput())
+    expect(result.value).toBeNull()
+  })
 })
