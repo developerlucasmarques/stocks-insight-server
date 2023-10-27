@@ -16,11 +16,11 @@ export class FetchStockQuoteController implements Controller {
       if (validationResult.isLeft()) {
         return badRequest(validationResult.value)
       }
-      const fetchQuoteResult = await this.fetchStockQuote.perform(httpRequest.params.stockSymbol)
-      if (fetchQuoteResult.isLeft()) {
-        return notFound(fetchQuoteResult.value)
+      const fetchStockQuoteResult = await this.fetchStockQuote.perform(httpRequest.params.stockSymbol)
+      if (fetchStockQuoteResult.isLeft()) {
+        return notFound(fetchStockQuoteResult.value)
       }
-      return ok(fetchQuoteResult.value)
+      return ok(fetchStockQuoteResult.value)
     } catch (error: any) {
       return serverError(error)
     }

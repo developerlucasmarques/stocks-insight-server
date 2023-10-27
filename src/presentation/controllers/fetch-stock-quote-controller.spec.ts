@@ -29,12 +29,12 @@ const makeValidation = (): Validation => {
 }
 
 const makeFetchStockQuote = (): FetchStockQuote => {
-  class FetchQuoteStub implements FetchStockQuote {
+  class FetchStockQuoteStub implements FetchStockQuote {
     async perform (stockSymbol: string): Promise<FetchStockQuoteResponse> {
       return await Promise.resolve(right(makeFakeStockQuote()))
     }
   }
-  return new FetchQuoteStub()
+  return new FetchStockQuoteStub()
 }
 
 type SutTypes = {
