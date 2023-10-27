@@ -2,6 +2,7 @@ import { type Either, right, left } from '@/shared/either'
 import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchQuoteController } from './fetch-quote-controller'
+import { badRequest } from '../helpers/http-helper'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -45,9 +46,6 @@ describe('FetchQuote Controller', () => {
       Promise.resolve(left(new Error('any_message')))
     )
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual({
-      statusCode: 400,
-      body: new Error('any_message')
-    })
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
   })
 })
