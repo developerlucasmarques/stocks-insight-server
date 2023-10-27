@@ -1,7 +1,7 @@
 import type { FetchQuote } from '@/domain/contracts/fetch-quote'
 import type { Controller } from '../contracts/controller'
 import type { Validation } from '../contracts/validation'
-import { badRequest, notFound, serverError } from '../helpers/http-helper'
+import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
 import type { HttpRequest, HttpResponse } from '../http-types/http'
 
 export class FetchQuoteController implements Controller {
@@ -20,9 +20,7 @@ export class FetchQuoteController implements Controller {
       if (fetchQuoteResult.isLeft()) {
         return notFound(fetchQuoteResult.value)
       }
-      return await Promise.resolve({
-        body: '', statusCode: 0
-      })
+      return ok(fetchQuoteResult.value)
     } catch (error: any) {
       return serverError(error)
     }
