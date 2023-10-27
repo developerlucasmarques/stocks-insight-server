@@ -91,4 +91,13 @@ describe('FetchQuote Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(notFound(new StockQuoteNotFoundError('any_stock_symbol')))
   })
+
+  it('Should return 500 if FetchQuote throws', async () => {
+    const { sut, fetchQuoteStub } = makeSut()
+    jest.spyOn(fetchQuoteStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
