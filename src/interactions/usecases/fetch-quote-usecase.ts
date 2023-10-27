@@ -11,8 +11,6 @@ export class FetchQuoteUseCase implements FetchQuote {
     if (!stockQuote) {
       return left(new StockQuoteNotFoundError(stockSymbol))
     }
-    return await Promise.resolve(
-      right({ name: '', lastPrice: 0, pricedAt: '' })
-    )
+    return right(stockQuote)
   }
 }
