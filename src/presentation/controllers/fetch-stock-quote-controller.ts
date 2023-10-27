@@ -1,7 +1,7 @@
 import type { FetchStockQuote } from '@/domain/contracts/fetch-stock-quote'
 import type { Controller } from '../contracts/controller'
 import type { Validation } from '../contracts/validation'
-import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
+import { badRequest, notFound, ok, serverError } from '../helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '../http-types/http'
 
 export class FetchStockQuoteController implements Controller {
