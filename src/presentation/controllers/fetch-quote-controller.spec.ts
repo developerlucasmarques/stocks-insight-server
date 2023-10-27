@@ -2,9 +2,10 @@ import { type Either, right, left } from '@/shared/either'
 import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchQuoteController } from './fetch-quote-controller'
-import { badRequest } from '../helpers/http-helper'
+import { badRequest, notFound } from '../helpers/http-helper'
 import type { FetchQuote, FetchQuoteResponse } from '@/domain/contracts/fetch-quote'
 import type { StockQuote } from '@/domain/models/stock-quote'
+import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -71,5 +72,14 @@ describe('FetchQuote Controller', () => {
     const performSpy = jest.spyOn(fetchQuoteStub, 'perform')
     await sut.handle(makeFakeRequest())
     expect(performSpy).toHaveBeenCalledWith('any_stock_symbol')
+  })
+
+  it('Should return 404 if FetchQuote returns StockQuoteNotFoundError', async () => {
+    const { sut, fetchQuoteStub } = makeSut()
+    jest.spyOn(fetchQuoteStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new StockQuoteNotFoundError('any_stock_symbol')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(notFound(new StockQuoteNotFoundError('any_stock_symbol')))
   })
 })
