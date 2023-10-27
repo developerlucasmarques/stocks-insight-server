@@ -2,7 +2,7 @@ import { type Either, right, left } from '@/shared/either'
 import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchQuoteController } from './fetch-quote-controller'
-import { badRequest, notFound, serverError } from '../helpers/http-helper'
+import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
 import type { FetchQuote, FetchQuoteResponse } from '@/domain/contracts/fetch-quote'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
@@ -99,5 +99,11 @@ describe('FetchQuote Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should return 200 if FetchQuote is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeStockQuote()))
   })
 })
