@@ -57,4 +57,10 @@ describe('FetchQuote UseCase', () => {
     const promise = sut.perform('any_stock_symbol')
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return StockQuote if FetchQuoteBySymbolApi is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform('any_stock_symbol')
+    expect(result.value).toEqual(makeFakeStockQuote())
+  })
 })
