@@ -40,4 +40,13 @@ describe('StockSymbol Validation', () => {
     const result = await sut.validate(makeInput())
     expect(result.value).toEqual(new InvalidStockSymbolError('any_stock_symbol'))
   })
+
+  it('Should throw if FetchStockSymbolCache throws', async () => {
+    const { sut, fetchStockSymbolCacheStub } = makeSut()
+    jest.spyOn(fetchStockSymbolCacheStub, 'fetchOneSymbol').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.validate(makeInput())
+    await expect(promise).rejects.toThrow()
+  })
 })
