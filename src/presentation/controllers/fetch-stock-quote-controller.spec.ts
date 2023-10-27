@@ -1,7 +1,7 @@
 import { type Either, right, left } from '@/shared/either'
 import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
-import { FetchQuoteController } from './fetch-quote-controller'
+import { FetchStockQuoteController } from './fetch-stock-quote-controller'
 import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
 import type { FetchQuote, FetchQuoteResponse } from '@/domain/contracts/fetch-quote'
 import type { StockQuote } from '@/domain/models/stock-quote'
@@ -38,7 +38,7 @@ const makeFetchQuote = (): FetchQuote => {
 }
 
 type SutTypes = {
-  sut: FetchQuoteController
+  sut: FetchStockQuoteController
   validationStub: Validation
   fetchQuoteStub: FetchQuote
 }
@@ -46,11 +46,11 @@ type SutTypes = {
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
   const fetchQuoteStub = makeFetchQuote()
-  const sut = new FetchQuoteController(validationStub, fetchQuoteStub)
+  const sut = new FetchStockQuoteController(validationStub, fetchQuoteStub)
   return { sut, validationStub, fetchQuoteStub }
 }
 
-describe('FetchQuote Controller', () => {
+describe('FetchStockQuote Controller', () => {
   it('Should call Validation with correct value', async () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')

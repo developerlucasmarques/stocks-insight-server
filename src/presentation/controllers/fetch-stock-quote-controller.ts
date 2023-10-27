@@ -4,7 +4,7 @@ import type { Validation } from '../contracts/validation'
 import { badRequest, notFound, ok, serverError } from '../helpers/http-helper'
 import type { HttpRequest, HttpResponse } from '../http-types/http'
 
-export class FetchQuoteController implements Controller {
+export class FetchStockQuoteController implements Controller {
   constructor (
     private readonly validationStub: Validation,
     private readonly fetchQuote: FetchQuote
