@@ -4,7 +4,12 @@ import { AlphaVantageApi } from './alpha-vantage-api'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 
 const apiKey = 'any_api_key'
-const baseUrl = 'https://www.alphavantage.co/query?function='
+
+const makeFakeUrl = (func: string): string => {
+  const symbol = 'AAPL'
+  const baseUrl = 'https://www.alphavantage.co/query?function='
+  return `${baseUrl}${func}&symbol=${symbol}&apikey=${apiKey}`
+}
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -38,19 +43,15 @@ describe('AlphaVantageApi', () => {
 
   it('Should call axios with correct url', async () => {
     const sut = makeSut()
-    const stockSymbol = 'AAPL'
-    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
-    axiosMock.onGet(url).reply(200, makeFakeGlobalStockQuote())
-    await sut.fetchStockQuote(stockSymbol)
-    expect(axiosMock.history.get[0].url).toBe(url)
+    axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
+    await sut.fetchStockQuote('AAPL')
+    expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE'))
   })
 
   it('Should return a GlobalStockQuote if fetch stock quote is a success', async () => {
     const sut = makeSut()
-    const stockSymbol = 'AAPL'
-    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
-    axiosMock.onGet(url).reply(200, makeFakeGlobalStockQuote())
-    const result = await sut.fetchStockQuote(stockSymbol)
+    axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
+    const result = await sut.fetchStockQuote('AAPL')
     expect(result).toEqual({
       name: 'AAPL',
       lastPrice: 166.89,
@@ -60,19 +61,15 @@ describe('AlphaVantageApi', () => {
 
   it('Should return null if stock quote not found', async () => {
     const sut = makeSut()
-    const stockSymbol = 'AAPL'
-    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
-    axiosMock.onGet(url).reply(200, null)
-    const result = await sut.fetchStockQuote(stockSymbol)
+    axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, null)
+    const result = await sut.fetchStockQuote('AAPL')
     expect(result).toBeNull()
   })
 
   it('Should throw if axios throws', async () => {
     const sut = makeSut()
-    const stockSymbol = 'AAPL'
-    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
-    axiosMock.onGet(url).reply(404)
-    const promise = sut.fetchStockQuote(stockSymbol)
+    axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(404)
+    const promise = sut.fetchStockQuote('AAPL')
     await expect(promise).rejects.toThrow()
   })
 })

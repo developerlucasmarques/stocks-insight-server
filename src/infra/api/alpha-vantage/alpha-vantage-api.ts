@@ -9,7 +9,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
   constructor (private readonly apiKey: string) {}
 
   async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
-    const url = this.baseUrl + `GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${this.apiKey}`
+    const url = this.makeUrl('GLOBAL_QUOTE', stockSymbol)
     const response = await axios.get(url)
     if (!response.data) return null
     const data: GlobalStockQuote = response.data
@@ -18,5 +18,9 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
       lastPrice: Number(Number(data['Global Quote']['05. price']).toFixed(2)),
       pricedAt: data['Global Quote']['07. latest trading day']
     }
+  }
+
+  private makeUrl (func: string, symbol: string): string {
+    return `${this.baseUrl}${func}&symbol=${symbol}&apikey=${this.apiKey}`
   }
 }
