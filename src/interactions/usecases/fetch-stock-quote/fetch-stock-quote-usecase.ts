@@ -1,5 +1,5 @@
 import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts/fetch-stock-quote'
-import type { FetchStockQuoteBySymbolApi } from '../contracts/api/fetch-stock-quote-by-symbol-api'
+import type { FetchStockQuoteBySymbolApi } from '../../contracts/api/fetch-stock-quote-by-symbol-api'
 import { left, right } from '@/shared/either'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
