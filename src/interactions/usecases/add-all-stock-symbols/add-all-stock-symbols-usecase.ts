@@ -12,10 +12,10 @@ export class AddAllStockSymbolsUseCase implements AddAllStockSymbols {
 
   async perform (): Promise<AddAllStockSymbolsResponse> {
     const symbols = await this.fetchAllSymbolsOfListedStocksApi.fetchAll()
-    if (!symbols) {
+    if (symbols.length === 0) {
       return left(new StockSymbolsNotFoundError())
     }
-    await this.addAllStockSymbolsCache.addAllSymbols(symbols.symbols)
+    await this.addAllStockSymbolsCache.addAllSymbols(symbols)
     return right(null)
   }
 }

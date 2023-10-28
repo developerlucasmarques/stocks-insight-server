@@ -1,16 +1,12 @@
-import type { FetchAllSymbolsOfListedStocksApi, StockSymbols } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
+import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
 import { AddAllStockSymbolsUseCase } from './add-all-stock-symbols-usecase'
 import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
 import { type AddAllStockSymbolsCache } from '@/interactions/contracts/cache/add-all-stock-symbols-cache'
 
-const makeFakeStockSymbols = (): StockSymbols => ({
-  symbols: ['any_stock_symbol', 'another_stock_symbol']
-})
-
 const makeFetchAllSymbolsOfListedStocksApi = (): FetchAllSymbolsOfListedStocksApi => {
   class FetchAllSymbolsOfListedStocksApiStub implements FetchAllSymbolsOfListedStocksApi {
-    async fetchAll (): Promise<null | StockSymbols> {
-      return await Promise.resolve(makeFakeStockSymbols())
+    async fetchAll (): Promise<string[]> {
+      return await Promise.resolve(['any_stock_symbol', 'another_stock_symbol'])
     }
   }
   return new FetchAllSymbolsOfListedStocksApiStub()
@@ -50,10 +46,10 @@ describe('AddAllStockSymbols UseCase', () => {
     expect(fetchAllSpy).toHaveBeenCalled()
   })
 
-  it('Should return StockSymbolsNotFoundError if FetchAllSymbolsOfListedStocksApi returns null', async () => {
+  it('Should return StockSymbolsNotFoundError if FetchAllSymbolsOfListedStocksApi returns empty', async () => {
     const { sut, fetchAllSymbolsOfListedStocksApiStub } = makeSut()
     jest.spyOn(fetchAllSymbolsOfListedStocksApiStub, 'fetchAll').mockReturnValueOnce(
-      Promise.resolve(null)
+      Promise.resolve([])
     )
     const result = await sut.perform()
     expect(result.value).toEqual(new StockSymbolsNotFoundError())
