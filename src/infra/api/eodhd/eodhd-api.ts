@@ -8,7 +8,13 @@ export class EodhdApi implements FetchAllSymbolsOfListedStocksApi {
 
   async fetchAll (): Promise<string[]> {
     const url = this.baseUrl + this.apiToken
-    await axios.get(url)
-    return ['']
+    const response = await axios.get(url)
+    const lines = response.data.split('\n')
+    const stockCodes: string[] = []
+    for (const line of lines) {
+      stockCodes.push(line.split(',')[0])
+    }
+    stockCodes.shift(); stockCodes.pop()
+    return stockCodes
   }
 }
