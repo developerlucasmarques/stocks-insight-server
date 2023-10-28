@@ -1,6 +1,7 @@
 import type { FetchAllSymbolsOfListedStocksApi, StockSymbols } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
 import { AddAllStockSymbolsUseCase } from './add-all-stock-symbols-usecase'
 import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
+import { type AddAllStockSymbolsCache } from '@/interactions/contracts/cache/add-all-stock-symbols-cache'
 
 const makeFakeStockSymbols = (): StockSymbols => ({
   symbols: ['any_stock_symbol', 'another_stock_symbol']
@@ -15,15 +16,30 @@ const makeFetchAllSymbolsOfListedStocksApi = (): FetchAllSymbolsOfListedStocksAp
   return new FetchAllSymbolsOfListedStocksApiStub()
 }
 
+const makeAddAllStockSymbolsCache = (): AddAllStockSymbolsCache => {
+  class AddAllStockSymbolsCacheStub implements AddAllStockSymbolsCache {
+    async addAllSymbols (): Promise<void> {
+      await Promise.resolve()
+    }
+  }
+  return new AddAllStockSymbolsCacheStub()
+}
+
 type SutTypes = {
   sut: AddAllStockSymbolsUseCase
   fetchAllSymbolsOfListedStocksApiStub: FetchAllSymbolsOfListedStocksApi
+  addAllStockSymbolsCacheStub: AddAllStockSymbolsCache
 }
 
 const makeSut = (): SutTypes => {
   const fetchAllSymbolsOfListedStocksApiStub = makeFetchAllSymbolsOfListedStocksApi()
-  const sut = new AddAllStockSymbolsUseCase(fetchAllSymbolsOfListedStocksApiStub)
-  return { sut, fetchAllSymbolsOfListedStocksApiStub }
+  const addAllStockSymbolsCacheStub = makeAddAllStockSymbolsCache()
+  const sut = new AddAllStockSymbolsUseCase(
+    fetchAllSymbolsOfListedStocksApiStub, addAllStockSymbolsCacheStub
+  )
+  return {
+    sut, fetchAllSymbolsOfListedStocksApiStub, addAllStockSymbolsCacheStub
+  }
 }
 
 describe('AddAllStockSymbols UseCase', () => {
@@ -50,5 +66,14 @@ describe('AddAllStockSymbols UseCase', () => {
     )
     const promise = sut.perform()
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call AddAllStockSymbolsCache with correct symbols', async () => {
+    const { sut, addAllStockSymbolsCacheStub } = makeSut()
+    const addAllSymbolsSpy = jest.spyOn(addAllStockSymbolsCacheStub, 'addAllSymbols')
+    await sut.perform()
+    expect(addAllSymbolsSpy).toHaveBeenCalledWith([
+      'any_stock_symbol', 'another_stock_symbol'
+    ])
   })
 })
