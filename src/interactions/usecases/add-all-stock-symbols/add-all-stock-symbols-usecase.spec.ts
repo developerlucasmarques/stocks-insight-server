@@ -76,4 +76,13 @@ describe('AddAllStockSymbols UseCase', () => {
       'any_stock_symbol', 'another_stock_symbol'
     ])
   })
+
+  it('Should throw if AddAllStockSymbolsCache throws', async () => {
+    const { sut, addAllStockSymbolsCacheStub } = makeSut()
+    jest.spyOn(addAllStockSymbolsCacheStub, 'addAllSymbols').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
