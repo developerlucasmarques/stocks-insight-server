@@ -24,35 +24,39 @@ describe('StockSymbolsRedis Cache', () => {
     await redis.flushall()
   })
 
-  it('Should add symbols in Redis stockSymbols', async () => {
-    const sut = makeSut()
-    await sut.addAllSymbols([
-      'any_stock_symbol', 'another_stock_symbol'
-    ])
-    const symbols = await redis.get('stockSymbols')
-    const parseSymbols = JSON.parse(symbols as string)
-    expect(parseSymbols).toEqual(['any_stock_symbol', 'another_stock_symbol'])
+  describe('addAllSymbols()', () => {
+    it('Should add symbols in Redis stockSymbols', async () => {
+      const sut = makeSut()
+      await sut.addAllSymbols([
+        'any_stock_symbol', 'another_stock_symbol'
+      ])
+      const symbols = await redis.get('stockSymbols')
+      const parseSymbols = JSON.parse(symbols as string)
+      expect(parseSymbols).toEqual(['any_stock_symbol', 'another_stock_symbol'])
+    })
   })
 
-  it('Should fetch one symbol on success', async () => {
-    const sut = makeSut()
-    await redis.set('stockSymbols', JSON.stringify([
-      'any_stock_symbol', 'another_stock_symbol'
-    ]))
-    const symbols = await sut.fetchOneSymbol('any_stock_symbol')
-    expect(symbols).toEqual({ symbol: 'any_stock_symbol' })
-  })
+  describe('fetchOneSymbol()', () => {
+    it('Should fetch one symbol on success', async () => {
+      const sut = makeSut()
+      await redis.set('stockSymbols', JSON.stringify([
+        'any_stock_symbol', 'another_stock_symbol'
+      ]))
+      const symbols = await sut.fetchOneSymbol('any_stock_symbol')
+      expect(symbols).toEqual({ symbol: 'any_stock_symbol' })
+    })
 
-  it('Should return null if no symbol is found', async () => {
-    const sut = makeSut()
-    const symbols = await sut.fetchOneSymbol('any_stock_symbol')
-    expect(symbols).toBeNull()
-  })
+    it('Should return null if no symbol is found', async () => {
+      const sut = makeSut()
+      const symbols = await sut.fetchOneSymbol('any_stock_symbol')
+      expect(symbols).toBeNull()
+    })
 
-  it('Should return null if the searched symbol is not found', async () => {
-    const sut = makeSut()
-    await redis.set('stockSymbols', JSON.stringify(['another_stock_symbol']))
-    const symbols = await sut.fetchOneSymbol('any_stock_symbol')
-    expect(symbols).toBeNull()
+    it('Should return null if the searched symbol is not found', async () => {
+      const sut = makeSut()
+      await redis.set('stockSymbols', JSON.stringify(['another_stock_symbol']))
+      const symbols = await sut.fetchOneSymbol('any_stock_symbol')
+      expect(symbols).toBeNull()
+    })
   })
 })
