@@ -50,4 +50,11 @@ describe('Eodhd Api', () => {
     const result = await sut.fetchAll()
     expect(result.length).toBe(0)
   })
+
+  it('Should throw if axios throws', async () => {
+    const sut = makeSut()
+    axiosMock.onGet(makeFakeUrl()).reply(404)
+    const promise = sut.fetchAll()
+    await expect(promise).rejects.toThrow()
+  })
 })
