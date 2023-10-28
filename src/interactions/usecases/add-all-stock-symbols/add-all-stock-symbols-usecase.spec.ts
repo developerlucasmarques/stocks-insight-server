@@ -42,4 +42,13 @@ describe('AddAllStockSymbols UseCase', () => {
     const result = await sut.perform()
     expect(result.value).toEqual(new StockSymbolsNotFoundError())
   })
+
+  it('Should throw if FetchAllSymbolsOfListedStocksApi throws', async () => {
+    const { sut, fetchAllSymbolsOfListedStocksApiStub } = makeSut()
+    jest.spyOn(fetchAllSymbolsOfListedStocksApiStub, 'fetchAll').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform()
+    await expect(promise).rejects.toThrow()
+  })
 })
