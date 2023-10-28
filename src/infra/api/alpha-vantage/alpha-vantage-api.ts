@@ -5,11 +5,13 @@ import type { GlobalStockQuote } from './types/global-stock-quote'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
+
   constructor (private readonly apiKey: string) {}
 
   async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
     const url = this.baseUrl + `GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${this.apiKey}`
     const response = await axios.get(url)
+    if (!response.data) return null
     const data: GlobalStockQuote = response.data
     return {
       name: data['Global Quote']['01. symbol'],
