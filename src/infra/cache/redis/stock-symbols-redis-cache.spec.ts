@@ -33,4 +33,13 @@ describe('StockSymbolsRedis Cache', () => {
     const parseSymbols = JSON.parse(symbols as string)
     expect(parseSymbols).toEqual(['any_stock_symbol', 'another_stock_symbol'])
   })
+
+  it('Should fetch one symbol on success', async () => {
+    const sut = makeSut()
+    await redis.set('stockSymbols', JSON.stringify([
+      'any_stock_symbol', 'another_stock_symbol'
+    ]))
+    const symbols = await sut.fetchOneSymbol('any_stock_symbol')
+    expect(symbols).toEqual({ symbol: 'any_stock_symbol' })
+  })
 })
