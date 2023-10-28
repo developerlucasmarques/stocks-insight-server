@@ -44,4 +44,17 @@ describe('AlphaVantageApi', () => {
     await sut.fetchStockQuote(stockSymbol)
     expect(axiosMock.history.get[0].url).toBe(url)
   })
+
+  it('Should return a GlobalStockQuote if fetch stock quote is a success', async () => {
+    const sut = makeSut()
+    const stockSymbol = 'AAPL'
+    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
+    axiosMock.onGet(url).reply(200, makeFakeGlobalStockQuote())
+    const result = await sut.fetchStockQuote(stockSymbol)
+    expect(result).toEqual({
+      name: 'AAPL',
+      lastPrice: 166.89,
+      pricedAt: '2023-01-01'
+    })
+  })
 })
