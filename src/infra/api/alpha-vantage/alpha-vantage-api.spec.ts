@@ -66,4 +66,13 @@ describe('AlphaVantageApi', () => {
     const result = await sut.fetchStockQuote(stockSymbol)
     expect(result).toBeNull()
   })
+
+  it('Should throw if axios throws', async () => {
+    const sut = makeSut()
+    const stockSymbol = 'AAPL'
+    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
+    axiosMock.onGet(url).reply(404)
+    const promise = sut.fetchStockQuote(stockSymbol)
+    await expect(promise).rejects.toThrow()
+  })
 })
