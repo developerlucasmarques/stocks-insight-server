@@ -57,4 +57,13 @@ describe('AlphaVantageApi', () => {
       pricedAt: '2023-01-01'
     })
   })
+
+  it('Should return null if stock quote not found', async () => {
+    const sut = makeSut()
+    const stockSymbol = 'AAPL'
+    const url = `${baseUrl}GLOBAL_QUOTE&symbol=${stockSymbol}&apikey=${apiKey}`
+    axiosMock.onGet(url).reply(200, null)
+    const result = await sut.fetchStockQuote(stockSymbol)
+    expect(result).toBeNull()
+  })
 })
