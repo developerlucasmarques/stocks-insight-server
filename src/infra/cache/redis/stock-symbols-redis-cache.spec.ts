@@ -48,4 +48,11 @@ describe('StockSymbolsRedis Cache', () => {
     const symbols = await sut.fetchOneSymbol('any_stock_symbol')
     expect(symbols).toBeNull()
   })
+
+  it('Should return null if the searched symbol is not found', async () => {
+    const sut = makeSut()
+    await redis.set('stockSymbols', JSON.stringify(['another_stock_symbol']))
+    const symbols = await sut.fetchOneSymbol('any_stock_symbol')
+    expect(symbols).toBeNull()
+  })
 })
