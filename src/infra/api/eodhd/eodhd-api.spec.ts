@@ -43,4 +43,11 @@ describe('Eodhd Api', () => {
     const result = await sut.fetchAll()
     expect(result).toEqual(['AAACX', 'AAC-UN'])
   })
+
+  it('Should return empty if stock symbols not found', async () => {
+    const sut = makeSut()
+    axiosMock.onGet(makeFakeUrl()).reply(200, null)
+    const result = await sut.fetchAll()
+    expect(result.length).toBe(0)
+  })
 })
