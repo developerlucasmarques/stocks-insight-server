@@ -1,6 +1,7 @@
 import type { AddAllStockSymbols, AddAllStockSymbolsResponse } from '@/domain/contracts/add-all-stock-symbols'
+import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
 import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
-import { right } from '@/shared/either'
+import { left, right } from '@/shared/either'
 
 export class AddAllStockSymbolsUseCase implements AddAllStockSymbols {
   constructor (
@@ -8,7 +9,10 @@ export class AddAllStockSymbolsUseCase implements AddAllStockSymbols {
   ) {}
 
   async perform (): Promise<AddAllStockSymbolsResponse> {
-    await this.fetchAllSymbols.fetchAll()
+    const symbols = await this.fetchAllSymbols.fetchAll()
+    if (!symbols) {
+      return left(new StockSymbolsNotFoundError())
+    }
     return right(null)
   }
 }
