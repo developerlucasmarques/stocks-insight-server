@@ -85,4 +85,10 @@ describe('AddAllStockSymbols UseCase', () => {
     const promise = sut.perform()
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return null if AddAllStockSymbolsCache is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform()
+    expect(result.value).toEqual(null)
+  })
 })
