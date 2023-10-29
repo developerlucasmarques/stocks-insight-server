@@ -1,7 +1,7 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockQuoteUseCase } from './fetch-stock-quote-usecase'
-import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
+import { StockQuoteNotFoundError } from '@/domain/errors'
 
 const makeFakeStockQuote = (): StockQuote => ({
   name: 'any_stock_name',

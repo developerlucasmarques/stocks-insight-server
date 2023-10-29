@@ -1,7 +1,7 @@
 import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts'
 import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { left, right } from '@/shared/either'
-import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
+import { StockQuoteNotFoundError } from '@/domain/errors'
 
 export class FetchStockQuoteUseCase implements FetchStockQuote {
   constructor (private readonly fetchStockQuoteBySymbolApi: FetchStockQuoteBySymbolApi) {}

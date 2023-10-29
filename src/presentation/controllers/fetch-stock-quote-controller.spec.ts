@@ -5,7 +5,7 @@ import { FetchStockQuoteController } from './fetch-stock-quote-controller'
 import { badRequest, notFound, ok, serverError } from '../helpers/http/http-helper'
 import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts'
 import type { StockQuote } from '@/domain/models/stock-quote'
-import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
+import { StockQuoteNotFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {

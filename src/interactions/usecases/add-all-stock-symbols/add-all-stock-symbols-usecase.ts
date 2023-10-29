@@ -1,5 +1,5 @@
 import type { AddAllStockSymbols, AddAllStockSymbolsResponse } from '@/domain/contracts'
-import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
+import { StockSymbolsNotFoundError } from '@/domain/errors'
 import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api'
 import type { AddAllStockSymbolsCache } from '@/interactions/contracts/cache'
 import { left, right } from '@/shared/either'
