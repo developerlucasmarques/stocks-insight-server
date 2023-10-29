@@ -1,6 +1,6 @@
 import type { AddAllStockSymbols, AddAllStockSymbolsResponse } from '@/domain/contracts/add-all-stock-symbols'
 import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
-import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
+import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api'
 import type { AddAllStockSymbolsCache } from '@/interactions/contracts/cache'
 import { left, right } from '@/shared/either'
 

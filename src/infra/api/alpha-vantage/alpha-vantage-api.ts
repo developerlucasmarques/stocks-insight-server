@@ -1,5 +1,5 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
-import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api/fetch-stock-quote-by-symbol-api'
+import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 

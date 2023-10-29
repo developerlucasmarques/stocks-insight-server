@@ -1,4 +1,4 @@
-import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
+import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 
 export class EodhdApi implements FetchAllSymbolsOfListedStocksApi {

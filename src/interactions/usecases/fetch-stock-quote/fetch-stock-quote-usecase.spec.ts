@@ -1,5 +1,5 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
-import type { FetchStockQuoteBySymbolApi } from '../../contracts/api/fetch-stock-quote-by-symbol-api'
+import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockQuoteUseCase } from './fetch-stock-quote-usecase'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 
