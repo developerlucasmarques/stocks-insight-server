@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis'
-import env from '@/main/config/redis-env'
+import env from '@/main/config/envs/redis-env'
 
 export class RedisHelper {
   private static cli: Redis | null
