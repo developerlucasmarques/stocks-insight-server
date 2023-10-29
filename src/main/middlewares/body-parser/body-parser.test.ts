@@ -1,5 +1,5 @@
 import request from 'supertest'
-import app from '../config/app'
+import app from '@/main/config/app'
 import type { Request, Response } from 'express'
 
 describe('BodyParser Middleware', () => {

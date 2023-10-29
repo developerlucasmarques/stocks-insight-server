@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express'
-import app from '../config/app'
+import app from '@/main/config/app'
 import request from 'supertest'
 
 describe('Content Type Middleware', () => {
