@@ -1,6 +1,6 @@
 import type { FetchStockSymbolCache } from '@/interactions/contracts/cache'
 import type { Validation } from '@/presentation/contracts'
-import { InvalidStockSymbolError } from '@/presentation/errors/invalid-stock-symbol-error'
+import { InvalidStockSymbolError } from '@/presentation/errors'
 import { type Either, right, left } from '@/shared/either'
 
 export class StockSymbolValidation implements Validation {

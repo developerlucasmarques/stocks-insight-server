@@ -1,6 +1,6 @@
 import type { FetchStockSymbolCache, StockSymbol } from '@/interactions/contracts/cache'
 import { StockSymbolValidation } from './stock-symbol-validation'
-import { InvalidStockSymbolError } from '@/presentation/errors/invalid-stock-symbol-error'
+import { InvalidStockSymbolError } from '@/presentation/errors'
 
 const makeInput = (): any => ({ stockSymbol: 'any_stock_symbol' })
 
