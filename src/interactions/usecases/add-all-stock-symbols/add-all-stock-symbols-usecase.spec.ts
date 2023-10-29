@@ -1,7 +1,7 @@
 import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api/fetch-all-symbols-of-listed-stocks-api'
 import { AddAllStockSymbolsUseCase } from './add-all-stock-symbols-usecase'
 import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
-import { type AddAllStockSymbolsCache } from '@/interactions/contracts/cache/add-all-stock-symbols-cache'
+import { type AddAllStockSymbolsCache } from '@/interactions/contracts/cache'
 
 const makeFetchAllSymbolsOfListedStocksApi = (): FetchAllSymbolsOfListedStocksApi => {
   class FetchAllSymbolsOfListedStocksApiStub implements FetchAllSymbolsOfListedStocksApi {

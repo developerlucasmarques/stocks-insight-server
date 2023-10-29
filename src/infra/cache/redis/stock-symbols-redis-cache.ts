@@ -1,6 +1,5 @@
-import type { AddAllStockSymbolsCache } from '@/interactions/contracts/cache/add-all-stock-symbols-cache'
+import type { AddAllStockSymbolsCache, FetchStockSymbolCache, StockSymbol } from '@/interactions/contracts/cache'
 import { RedisHelper } from './helpers/redis-helper'
-import { type FetchStockSymbolCache, type StockSymbol } from '@/interactions/contracts/cache/fetch-stock-symbol-cache'
 
 export class StockSymbolsRedisCache implements AddAllStockSymbolsCache, FetchStockSymbolCache {
   async addAllSymbols (symbols: string[]): Promise<void> {

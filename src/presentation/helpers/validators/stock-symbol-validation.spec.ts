@@ -1,4 +1,4 @@
-import type { FetchStockSymbolCache, StockSymbol } from '@/interactions/contracts/cache/fetch-stock-symbol-cache'
+import type { FetchStockSymbolCache, StockSymbol } from '@/interactions/contracts/cache'
 import { StockSymbolValidation } from './stock-symbol-validation'
 import { InvalidStockSymbolError } from '@/presentation/errors/invalid-stock-symbol-error'
 
