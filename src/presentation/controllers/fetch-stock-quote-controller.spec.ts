@@ -1,5 +1,5 @@
 import { type Either, right, left } from '@/shared/either'
-import type { Validation } from '../contracts/validation'
+import type { Validation } from '../contracts'
 import type { HttpRequest } from '../http-types/http'
 import { FetchStockQuoteController } from './fetch-stock-quote-controller'
 import { badRequest, notFound, ok, serverError } from '../helpers/http/http-helper'

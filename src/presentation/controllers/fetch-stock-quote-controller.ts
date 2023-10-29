@@ -1,6 +1,5 @@
 import type { FetchStockQuote } from '@/domain/contracts'
-import type { Controller } from '../contracts/controller'
-import type { Validation } from '../contracts/validation'
+import type { Controller, Validation } from '../contracts'
 import { badRequest, notFound, ok, serverError } from '../helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '../http-types/http'
 
