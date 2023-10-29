@@ -3,7 +3,7 @@ import type { Validation } from '../contracts/validation'
 import type { HttpRequest } from '../http-types/http'
 import { FetchStockQuoteController } from './fetch-stock-quote-controller'
 import { badRequest, notFound, ok, serverError } from '../helpers/http/http-helper'
-import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts/fetch-stock-quote'
+import type { FetchStockQuote, FetchStockQuoteResponse } from '@/domain/contracts'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { StockQuoteNotFoundError } from '@/domain/errors/sotck-quote-not-found-error'
 

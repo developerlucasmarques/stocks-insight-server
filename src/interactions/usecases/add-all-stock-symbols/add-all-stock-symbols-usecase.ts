@@ -1,4 +1,4 @@
-import type { AddAllStockSymbols, AddAllStockSymbolsResponse } from '@/domain/contracts/add-all-stock-symbols'
+import type { AddAllStockSymbols, AddAllStockSymbolsResponse } from '@/domain/contracts'
 import { StockSymbolsNotFoundError } from '@/domain/errors/stock-symbols-not-found-error'
 import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api'
 import type { AddAllStockSymbolsCache } from '@/interactions/contracts/cache'
