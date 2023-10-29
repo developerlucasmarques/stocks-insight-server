@@ -5,13 +5,13 @@ import type { HttpRequest, HttpResponse } from '../http-types/http'
 
 export class FetchStockQuoteController implements Controller {
   constructor (
-    private readonly validationStub: Validation,
+    private readonly validation: Validation,
     private readonly fetchStockQuote: FetchStockQuote
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const validationResult = await this.validationStub.validate(httpRequest.params)
+      const validationResult = await this.validation.validate(httpRequest.params)
       if (validationResult.isLeft()) {
         return badRequest(validationResult.value)
       }
