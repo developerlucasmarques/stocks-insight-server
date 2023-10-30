@@ -1,19 +1,22 @@
-import { RedisHelper } from '@/infra/cache/redis/helpers/redis-helper'
-import type { Redis } from 'ioredis'
-import RedisMock from 'ioredis-mock'
+import { Redis } from 'ioredis'
+import { RedisMemoryServer } from 'redis-memory-server'
 import request from 'supertest'
 import app from '../config/app'
 
+let redisServer: RedisMemoryServer
 let redis: Redis
 
-describe('StockSymbolsRedis Cache', () => {
-  beforeAll(() => {
-    redis = new RedisMock()
-    jest.spyOn(RedisHelper, 'getInstance').mockReturnValue(redis)
+describe('Stock Routes', () => {
+  beforeAll(async () => {
+    redisServer = new RedisMemoryServer()
+    const host = await redisServer.getHost()
+    const port = await redisServer.getPort()
+    redis = new Redis({ host, port })
   })
 
-  afterAll(() => {
+  afterAll(async () => {
     redis.disconnect()
+    await redisServer.stop()
   })
 
   beforeEach(async () => {
@@ -21,9 +24,9 @@ describe('StockSymbolsRedis Cache', () => {
   })
 
   it('Should return the current an stock quote', async () => {
-    const stockSymbol = 'any_stock_symbol'
+    await redis.set('stockSymbols', JSON.stringify(['AAPL', 'IBM']))
     await request(app)
-      .get(`/stock/${stockSymbol}/quote`)
-      .expect({ ok: stockSymbol })
+      .get('/stock/AAPL/quote')
+      .expect(200)
   })
 })
