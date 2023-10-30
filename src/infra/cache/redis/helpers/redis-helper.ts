@@ -21,4 +21,11 @@ export class RedisHelper {
     }
     return this.cli
   }
+
+  static async disconnect (): Promise<void> {
+    if (this.cli) {
+      await this.cli.quit()
+      this.cli = null
+    }
+  }
 }
