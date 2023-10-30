@@ -1,8 +1,12 @@
 import { MongoClient, type Collection } from 'mongodb'
 
 export class MongoHelper {
-  private static client: MongoClient | null
+  private static client: null | MongoClient
   private static uri: undefined | string
+
+  static getUri (): undefined | string {
+    return this.uri
+  }
 
   static async connect (uri: string | undefined): Promise<void> {
     if (!uri) {
