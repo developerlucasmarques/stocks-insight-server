@@ -1,3 +1,4 @@
+import { Redis } from 'ioredis'
 import { RedisHelper as sut } from './redis-helper'
 
 describe('RedisHelper', () => {
@@ -23,5 +24,10 @@ describe('RedisHelper', () => {
     const connectSpy = jest.spyOn(sut, 'connect')
     sut.getInstance()
     expect(connectSpy).toHaveBeenCalled()
+  })
+
+  it('Should return Redis instance', () => {
+    const redis = sut.getInstance()
+    expect(redis).toBeInstanceOf(Redis)
   })
 })
