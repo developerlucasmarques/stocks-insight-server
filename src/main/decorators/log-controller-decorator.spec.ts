@@ -36,4 +36,10 @@ describe('LogController Decorator', () => {
     await sut.handle(makeFakeRequest())
     expect(handleSpy).toHaveBeenCalledWith(makeFakeRequest())
   })
+
+  it('Should return the same result of the Controller', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok({ data: 'any_value' }))
+  })
 })
