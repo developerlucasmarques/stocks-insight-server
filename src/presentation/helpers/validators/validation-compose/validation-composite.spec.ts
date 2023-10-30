@@ -50,4 +50,10 @@ describe('Validation Composite', () => {
     const result = await sut.validate({ field: 'any_field' })
     expect(result.value).toEqual(new Error())
   })
+
+  it('Should return null if no validation fails', async () => {
+    const { sut } = makeSut()
+    const result = await sut.validate({ field: 'any_field' })
+    expect(result.value).toBe(null)
+  })
 })
