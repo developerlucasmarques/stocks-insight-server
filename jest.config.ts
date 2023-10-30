@@ -15,6 +15,7 @@ const config: Config = {
     '!<rootDir>/src/**/index.ts'
   ],
   testEnvironment: 'node',
+  preset: '@shelf/jest-mongodb',
   transform: {
     '.+\\.ts$': 'ts-jest'
   },
