@@ -20,4 +20,13 @@ describe('RequiredField Validation', () => {
     })
     expect(result.value).toEqual(new MissingParamError('field'))
   })
+
+  it('Should return null if input contain field name', async () => {
+    const sut = new RequiredFieldValidation('field')
+    const result = await sut.validate({
+      name: 'any name',
+      field: 'any field'
+    })
+    expect(result.value).toBe(null)
+  })
 })
