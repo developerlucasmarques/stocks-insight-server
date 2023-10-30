@@ -5,7 +5,9 @@ import { RedisHelper } from '@/infra/cache/redis/helpers/redis-helper'
 import { addAllStockSymbolsUseCaseFactory } from './factories/usecases/add-all-stock-symbols-usecase-factory'
 
 RedisHelper.connect()
-addAllStockSymbolsUseCaseFactory().perform()
+const addAllStockSymbolsUseCase = addAllStockSymbolsUseCaseFactory()
+
+addAllStockSymbolsUseCase.perform()
   .then(() => {
     app.listen(env.port, () => {
       console.log(`Server running at http://${env.host}:${env.port}`)

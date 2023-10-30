@@ -10,10 +10,14 @@ export class StockSymbolsRedisCache implements AddAllStockSymbolsCache, FetchSto
   async fetchOneSymbol (stockSymbol: string): Promise<null | StockSymbol> {
     const redis = RedisHelper.getInstance()
     const symbolsJson = await redis.get('stockSymbols')
-    if (!symbolsJson) return null
+    if (!symbolsJson) {
+      return null
+    }
     const allSymbols: string[] = JSON.parse(symbolsJson)
     const symbol = allSymbols.find((symbol) => symbol === stockSymbol)
-    if (!symbol) return null
+    if (!symbol) {
+      return null
+    }
     return { symbol }
   }
 }
