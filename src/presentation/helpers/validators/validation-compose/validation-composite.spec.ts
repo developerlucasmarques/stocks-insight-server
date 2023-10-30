@@ -38,4 +38,16 @@ describe('Validation Composite', () => {
     const result = await sut.validate({ name: 'any name' })
     expect(result.value).toEqual(new MissingParamError('field'))
   })
+
+  it('Should return the first error if more the one validation fails', async () => {
+    const { sut, validationStubs } = makeSut()
+    jest.spyOn(validationStubs[0], 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new Error()))
+    )
+    jest.spyOn(validationStubs[1], 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new MissingParamError('name')))
+    )
+    const result = await sut.validate({ field: 'any_field' })
+    expect(result.value).toEqual(new Error())
+  })
 })
