@@ -1,25 +1,27 @@
-import { RedisHelper } from './redis-helper'
+import { RedisHelper as sut } from './redis-helper'
 
 describe('RedisHelper', () => {
-  beforeEach(() => {
-    RedisHelper.connect()
-  })
-
   afterEach(async () => {
-    await RedisHelper.getInstance().quit()
+    await sut.disconnect()
   })
 
   it('Should create only once Redis instance', () => {
-    const redis1 = RedisHelper.getInstance()
-    const redis2 = RedisHelper.getInstance()
+    const redis1 = sut.getInstance()
+    const redis2 = sut.getInstance()
     expect(redis1).toBe(redis2)
   })
 
   it('Should connect Redis server with correct configs', () => {
-    const redis = RedisHelper.getInstance()
+    const redis = sut.getInstance()
     const config = redis.options
     expect(config.host).toBe('0.0.0.0')
     expect(config.port).toBe(6379)
     expect(config.password).toBe('')
+  })
+
+  it('Should call the connect method if the Redis instance has not yet been created', () => {
+    const connectSpy = jest.spyOn(sut, 'connect')
+    sut.getInstance()
+    expect(connectSpy).toHaveBeenCalled()
   })
 })
