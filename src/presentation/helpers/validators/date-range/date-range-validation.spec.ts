@@ -21,4 +21,10 @@ describe('DateRange Validation', () => {
     const result = await sut.validate(makeFakeInput('2023-01-02', '2023-01-02'))
     expect(result.isRight()).toBe(true)
   })
+
+  it('Should return valid result if initial date is less than final date', async () => {
+    const sut = makeSut()
+    const result = await sut.validate(makeFakeInput('2023-01-01', '2023-01-02'))
+    expect(result.isRight()).toBe(true)
+  })
 })
