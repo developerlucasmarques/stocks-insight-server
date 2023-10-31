@@ -1,10 +1,11 @@
 import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
 import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
+import { NoStockQuoteFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -124,7 +125,7 @@ describe('FetchStockComparison Controller', () => {
     expect(httpResponse).toEqual(serverError(new Error()))
   })
 
-  it('Should call FetchStockHistory with correct values', async () => {
+  it('Should call FetchStockComparison with correct values', async () => {
     const { sut, fetchStockComparisonStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
     await sut.handle(makeFakeRequest())
@@ -134,7 +135,7 @@ describe('FetchStockComparison Controller', () => {
     })
   })
 
-  it('Should call FetchStockHistory with just one stock to compare', async () => {
+  it('Should call FetchStockComparison with just one stock to compare', async () => {
     const { sut, fetchStockComparisonStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
     await sut.handle({
@@ -147,7 +148,7 @@ describe('FetchStockComparison Controller', () => {
     })
   })
 
-  it('Should call FetchStockHistory without any empty stocksToCompare', async () => {
+  it('Should call FetchStockComparison without any empty stocksToCompare', async () => {
     const { sut, fetchStockComparisonStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
     await sut.handle({
@@ -158,5 +159,14 @@ describe('FetchStockComparison Controller', () => {
       stockSymbol: 'any_stock_symbol',
       stocksToCompare: ['another_stock', 'other', 'other_stock']
     })
+  })
+
+  it('Should return 404 if FetchStockComparison returns NoStockQuoteFoundError', async () => {
+    const { sut, fetchStockComparisonStub } = makeSut()
+    jest.spyOn(fetchStockComparisonStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new NoStockQuoteFoundError()))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(notFound(new NoStockQuoteFoundError()))
   })
 })
