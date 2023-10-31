@@ -171,5 +171,13 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should throw if AlphaVantage return Information field', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, { Information: 'any_information' })
+      const promise = sut.fetchStockHistory(makeFakeFetchStockHistoryData())
+      await expect(promise).rejects.toThrow()
+      await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
   })
 })
