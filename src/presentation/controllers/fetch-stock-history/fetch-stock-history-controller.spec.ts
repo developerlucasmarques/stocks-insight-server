@@ -112,4 +112,13 @@ describe('FetchStockHistory Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(notFound(new StockHistoryNotFoundError(makeFakeFetchStockHistoryData())))
   })
+
+  it('Should return 500 if FetchStockHistory throws', async () => {
+    const { sut, fetchStockHistoryStub } = makeSut()
+    jest.spyOn(fetchStockHistoryStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
