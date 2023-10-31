@@ -1,12 +1,11 @@
-import { type FetchStockHistoryData } from '@/domain/contracts'
-import { type StockHistory } from '@/domain/models/stock-history'
+import type { FetchStockHistoryData } from '@/domain/contracts'
+import type { StockHistory } from '@/domain/models/stock-history'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { FetchStockHistoryApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
-import type { GlobalStockQuote } from './types/global-stock-quote'
+import type { GlobalStockQuote, DailyStockQuote } from './types'
 import { AlphaVantageApiHelper } from './helpers/alpha-vantage-api-helper'
-import { type DailyStockQuote } from './types/daily-stock-quote'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='

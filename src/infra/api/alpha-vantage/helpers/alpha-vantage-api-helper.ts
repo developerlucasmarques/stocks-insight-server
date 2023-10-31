@@ -1,7 +1,6 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
-import type { GlobalStockQuote } from '../types/global-stock-quote'
+import type { GlobalStockQuote, DailyStockQuote } from '../types'
 import type { StockHistory } from '@/domain/models/stock-history'
-import type { DailyStockQuote } from '../types/daily-stock-quote'
 import type { FetchStockHistoryData } from '@/domain/contracts'
 
 export class AlphaVantageApiHelper {
