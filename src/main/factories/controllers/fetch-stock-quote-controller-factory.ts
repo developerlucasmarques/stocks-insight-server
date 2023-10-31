@@ -1,5 +1,5 @@
 import type { Controller } from '@/presentation/contracts'
-import { FetchStockQuoteController } from '@/presentation/controllers/fetch-stock-quote-controller'
+import { FetchStockQuoteController } from '@/presentation/controllers'
 import { stockSymbolValidationFactory } from '../validators/stock-symbol-validation-factory'
 import { fetchStockQuoteUseCaseFactory } from '../usecases/fetch-stock-quote-usecase-factory'
 import { logControllerDecoratorFactory } from '../decorators/log-controller-decorator-factory'
