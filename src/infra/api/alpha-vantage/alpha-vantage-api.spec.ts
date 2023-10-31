@@ -10,7 +10,10 @@ const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
 const symbol = 'AAPL'
 
-const makeFakeUrl = (func: string): string => {
+const makeFakeUrl = (func: string, outputsize?: string): string => {
+  if (outputsize) {
+    return `${baseUrl}${func}&symbol=${symbol}&outputsize=${outputsize}&apikey=${apiKey}`
+  }
   return `${baseUrl}${func}&symbol=${symbol}&apikey=${apiKey}`
 }
 
@@ -105,10 +108,9 @@ describe('AlphaVantageApi', () => {
   describe('fetchStockHistory()', () => {
     it('Should call axios with correct url', async () => {
       const sut = makeSut()
-      const url = `${baseUrl}TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${apiKey}`
-      axiosMock.onGet(url).reply(200, makeFakeDailyStockQuote())
+      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, makeFakeDailyStockQuote())
       await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
-      expect(axiosMock.history.get[0].url).toBe(url)
+      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('TIME_SERIES_DAILY', 'full'))
     })
   })
 })
