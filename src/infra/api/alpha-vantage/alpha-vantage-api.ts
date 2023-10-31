@@ -6,6 +6,7 @@ import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 import { AlphaVantageApiHelper } from './helpers/alpha-vantage-api-helper'
+import { type DailyStockQuote } from './types/daily-stock-quote'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
@@ -45,24 +46,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
     if (keys.length === 0) {
       return null
     }
-    const value = response.data['Time Series (Daily)']
-    const filteredData: Record<string, any> = {}
-    for (const date in value) {
-      if (date >= data.initialDate && date <= data.finalDate) {
-        filteredData[date] = value[date]
-      }
-    }
-    const stockHistory: StockHistory = {
-      name: data.stockSymbol,
-      prices: Object.entries(filteredData).map(([date, dataValue]) => ({
-        opening: Number(parseFloat(dataValue['1. open']).toFixed(2)),
-        low: Number(parseFloat(dataValue['3. low']).toFixed(2)),
-        high: Number(parseFloat(dataValue['2. high']).toFixed(2)),
-        closing: Number(parseFloat(dataValue['4. close']).toFixed(2)),
-        pricedAt: date,
-        volume: Number(parseInt(dataValue['5. volume']).toFixed(2))
-      }))
-    }
-    return stockHistory
+    const dailyStock: DailyStockQuote = response.data
+    return AlphaVantageApiHelper.formatStockHistory(dailyStock, data)
   }
 }
