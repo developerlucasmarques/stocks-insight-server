@@ -4,7 +4,7 @@ import type { Validation } from '../../contracts'
 import type { HttpRequest } from '../../http-types/http'
 import { FetchStockHistoryController } from './fetch-stock-history-controller'
 import type { FetchStockHistory, FetchStockHistoryData, FetchStockHistoryResponse } from '@/domain/contracts'
-import { type StockHistory } from '@/domain/models/stock-history'
+import type { StockHistory } from '@/domain/models/stock-history'
 import { StockHistoryNotFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -42,7 +42,7 @@ const makeFakeStockHistory = (): StockHistory => ({
   }]
 })
 
-const makeValidation = (): Validation => {
+const makeParamsValidation = (): Validation => {
   class ValidationStub implements Validation {
     async validate (input: any): Promise<Either<Error, null>> {
       return await Promise.resolve(right(null))
@@ -62,28 +62,28 @@ const makeFetchStockHistory = (): FetchStockHistory => {
 
 type SutTypes = {
   sut: FetchStockHistoryController
-  validationStub: Validation
+  paramsValidationStub: Validation
   fetchStockHistoryStub: FetchStockHistory
 }
 
 const makeSut = (): SutTypes => {
-  const validationStub = makeValidation()
+  const paramsValidationStub = makeParamsValidation()
   const fetchStockHistoryStub = makeFetchStockHistory()
-  const sut = new FetchStockHistoryController(validationStub, fetchStockHistoryStub)
-  return { sut, validationStub, fetchStockHistoryStub }
+  const sut = new FetchStockHistoryController(paramsValidationStub, fetchStockHistoryStub)
+  return { sut, paramsValidationStub, fetchStockHistoryStub }
 }
 
 describe('FetchStockHistory Controller', () => {
   it('Should call Validation with correct value', async () => {
-    const { sut, validationStub } = makeSut()
-    const validateSpy = jest.spyOn(validationStub, 'validate')
+    const { sut, paramsValidationStub } = makeSut()
+    const validateSpy = jest.spyOn(paramsValidationStub, 'validate')
     await sut.handle(makeFakeRequest())
     expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().params)
   })
 
   it('Should return 400 if Validation fails', async () => {
-    const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+    const { sut, paramsValidationStub } = makeSut()
+    jest.spyOn(paramsValidationStub, 'validate').mockReturnValueOnce(
       Promise.resolve(left(new Error('any_message')))
     )
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -91,8 +91,8 @@ describe('FetchStockHistory Controller', () => {
   })
 
   it('Should return 500 if Validation throws', async () => {
-    const { sut, validationStub } = makeSut()
-    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+    const { sut, paramsValidationStub } = makeSut()
+    jest.spyOn(paramsValidationStub, 'validate').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const httpResponse = await sut.handle(makeFakeRequest())

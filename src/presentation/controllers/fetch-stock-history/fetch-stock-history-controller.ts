@@ -5,15 +5,15 @@ import type { FetchStockHistory } from '@/domain/contracts'
 
 export class FetchStockHistoryController implements Controller {
   constructor (
-    private readonly validationParams: Validation,
+    private readonly paramsValidation: Validation,
     private readonly fetchStockHistory: FetchStockHistory
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const validationResult = await this.validationParams.validate(httpRequest.params)
-      if (validationResult.isLeft()) {
-        return badRequest(validationResult.value)
+      const paramsValidationResult = await this.paramsValidation.validate(httpRequest.params)
+      if (paramsValidationResult.isLeft()) {
+        return badRequest(paramsValidationResult.value)
       }
       const { stockSymbol } = httpRequest.params
       const { from: initialDate, to: finalDate } = httpRequest.query
