@@ -1,10 +1,11 @@
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
 import { left, right, type Either } from '@/shared/either'
 import type { Validation } from '../../contracts'
 import type { HttpRequest } from '../../http-types/http'
 import { FetchStockHistoryController } from './fetch-stock-history-controller'
 import type { FetchStockHistory, FetchStockHistoryData, FetchStockHistoryResponse } from '@/domain/contracts'
 import { type StockHistory } from '@/domain/models/stock-history'
+import { StockHistoryNotFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -101,5 +102,14 @@ describe('FetchStockHistory Controller', () => {
     const performSpy = jest.spyOn(fetchStockHistoryStub, 'perform')
     await sut.handle(makeFakeRequest())
     expect(performSpy).toHaveBeenCalledWith(makeFakeFetchStockHistoryData())
+  })
+
+  it('Should return 404 if FetchStockHistory returns StockHistoryNotFoundError', async () => {
+    const { sut, fetchStockHistoryStub } = makeSut()
+    jest.spyOn(fetchStockHistoryStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new StockHistoryNotFoundError(makeFakeFetchStockHistoryData())))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(notFound(new StockHistoryNotFoundError(makeFakeFetchStockHistoryData())))
   })
 })
