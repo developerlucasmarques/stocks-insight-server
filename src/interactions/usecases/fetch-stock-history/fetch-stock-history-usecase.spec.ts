@@ -65,4 +65,13 @@ describe('FetchStockHistory UseCase', () => {
     const result = await sut.perform(makeFakeFetchStockHistoryData())
     expect(result.value).toEqual(new StockHistoryNotFoundError(makeFakeFetchStockHistoryData()))
   })
+
+  it('Should throw if FetchStockHistoryApi throws', async () => {
+    const { sut, fetchStockHistoryApiStub } = makeSut()
+    jest.spyOn(fetchStockHistoryApiStub, 'fetchStockHistory').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeFetchStockHistoryData())
+    await expect(promise).rejects.toThrow()
+  })
 })
