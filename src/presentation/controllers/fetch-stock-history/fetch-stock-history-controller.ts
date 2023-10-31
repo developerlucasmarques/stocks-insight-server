@@ -1,4 +1,4 @@
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { Controller, Validation } from '../../contracts'
 import type { HttpRequest, HttpResponse } from '../../http-types/http'
 import type { FetchStockHistory } from '@/domain/contracts'
@@ -22,7 +22,7 @@ export class FetchStockHistoryController implements Controller {
       if (fetchStockHistoryResult.isLeft()) {
         return notFound(fetchStockHistoryResult.value)
       }
-      return { statusCode: 0, body: '' }
+      return ok(fetchStockHistoryResult.value)
     } catch (error: any) {
       return serverError(error)
     }
