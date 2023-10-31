@@ -74,4 +74,10 @@ describe('FetchStockHistory UseCase', () => {
     const promise = sut.perform(makeFakeFetchStockHistoryData())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return StockHistory if FetchStockHistoryApi is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform(makeFakeFetchStockHistoryData())
+    expect(result.value).toEqual(makeFakeStockHistory())
+  })
 })
