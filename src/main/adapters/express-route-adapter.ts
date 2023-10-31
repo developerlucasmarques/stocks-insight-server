@@ -4,6 +4,9 @@ import type { Request, Response } from 'express'
 
 export const adaptRoute = (controller: Controller) => {
   return async (req: Request, res: Response) => {
+    if (req.params?.stockSymbol) {
+      req.params.stockSymbol = req.params.stockSymbol.toUpperCase()
+    }
     const httpRequest: HttpRequest = {
       body: req.body,
       params: req.params,
