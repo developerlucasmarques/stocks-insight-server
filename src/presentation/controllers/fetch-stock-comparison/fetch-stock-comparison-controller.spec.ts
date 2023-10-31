@@ -68,4 +68,13 @@ describe('FetchStockComparison Controller', () => {
     expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'another_stock' })
     expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'other_stock' })
   })
+
+  it('Should return 400 if Query Validation fails', async () => {
+    const { sut, queryValidationStub } = makeSut()
+    jest.spyOn(queryValidationStub, 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
 })
