@@ -60,4 +60,12 @@ describe('FetchStockComparison UseCase', () => {
     const promise = sut.perform(makeFakeStockSymbols())
     await expect(promise).rejects.toThrow()
   })
+
+  it('Should return StockComparison if FetchManyStockQuotesBySymbolsApi is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform(makeFakeStockSymbols())
+    expect(result.value).toEqual({
+      lastPrices: makeFakeStockQuotes()
+    })
+  })
 })
