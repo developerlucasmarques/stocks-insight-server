@@ -44,4 +44,19 @@ describe('StockToCompare Validation', () => {
     const result = await sut.validate(makeInput())
     expect(result.value).toEqual(new InvalidStockSymbolError('any_stock'))
   })
+
+  it('Should return valid result if FetchStockSymbolCache is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.validate({ stocksToCompare: 'any_stock' })
+    expect(result.isRight()).toBe(true)
+  })
+
+  it('Should return InvalidStockSymbolError if exist only one stocksToCompare and FetchStockSymbolCache returns null', async () => {
+    const { sut, fetchStockSymbolCacheStub } = makeSut()
+    jest.spyOn(fetchStockSymbolCacheStub, 'fetchOneSymbol').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const result = await sut.validate({ stocksToCompare: 'any_stock' })
+    expect(result.value).toEqual(new InvalidStockSymbolError('any_stock'))
+  })
 })
