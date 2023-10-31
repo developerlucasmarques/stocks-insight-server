@@ -25,10 +25,17 @@ describe('Stock Routes', () => {
     await redis.flushall()
   })
 
-  it('Should return the current an stock quote', async () => {
+  it('Should return 200 if StockQuote on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA']))
     await request(app)
       .get('/stock/AAPL/quote')
+      .expect(200)
+  })
+
+  it('Should return 200 if StockHistory on success', async () => {
+    await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA']))
+    await request(app)
+      .get('/stocks/AAPL/history?from=2023-01-02&to=2023-01-03')
       .expect(200)
   })
 })
