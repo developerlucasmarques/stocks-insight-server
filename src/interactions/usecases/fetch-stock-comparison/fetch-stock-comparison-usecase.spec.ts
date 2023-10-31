@@ -1,6 +1,7 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { type FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api'
 import { FetchStockComparisonUseCase } from './fetch-stock-comparison-usecase'
+import { NoStockQuoteFoundError } from '@/domain/errors'
 
 const makeFakeStockSymbols = (): string[] => (['any_stock', 'another_stock'])
 
@@ -16,7 +17,7 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
 
 const makeFetchManyStockQuotesBySymbolsApi = (): FetchManyStockQuotesBySymbolsApi => {
   class FetchManyStockQuotesBySymbolsApiStub implements FetchManyStockQuotesBySymbolsApi {
-    async fetchManyStockQuotes (stockSymbols: string[]): Promise<null | StockQuote[]> {
+    async fetchManyStockQuotes (stockSymbols: string[]): Promise<StockQuote[]> {
       return await Promise.resolve(makeFakeStockQuotes())
     }
   }
@@ -40,5 +41,14 @@ describe('FetchStockComparison UseCase', () => {
     const fetchStockQuoteSpy = jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes')
     await sut.perform(makeFakeStockSymbols())
     expect(fetchStockQuoteSpy).toHaveBeenCalledWith(makeFakeStockSymbols())
+  })
+
+  it('Should return NoStockQuoteFoundError if FetchStockQuoteBySymbolApi is empty', async () => {
+    const { sut, fetchManyStockQuotesBySymbolsApiStub } = makeSut()
+    jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes').mockReturnValueOnce(
+      Promise.resolve([])
+    )
+    const result = await sut.perform(makeFakeStockSymbols())
+    expect(result.value).toEqual(new NoStockQuoteFoundError())
   })
 })
