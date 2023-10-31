@@ -1,14 +1,12 @@
 import type { FetchStockComparison, FetchStockComparisonResponse } from '@/domain/contracts'
-import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
+import type { FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api/fetch-many-stock-quotes-by-symbols-api'
 import { right } from '@/shared/either'
 
 export class FetchStockComparisonUseCase implements FetchStockComparison {
-  constructor (private readonly fetchStockQuoteBySymbolApi: FetchStockQuoteBySymbolApi) {}
+  constructor (private readonly fetchManyStockQuotesBySymbolsApi: FetchManyStockQuotesBySymbolsApi) {}
 
   async perform (stockSymbols: string[]): Promise<FetchStockComparisonResponse> {
-    for (const symbol of stockSymbols) {
-      await this.fetchStockQuoteBySymbolApi.fetchStockQuote(symbol)
-    }
+    await this.fetchManyStockQuotesBySymbolsApi.fetchManyStockQuotes(stockSymbols)
     return right({ lastPrices: [] })
   }
 }
