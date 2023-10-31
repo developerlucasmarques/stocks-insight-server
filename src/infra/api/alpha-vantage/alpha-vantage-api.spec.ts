@@ -263,5 +263,14 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should throw if AlphaVantage return Information field', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(manyStockQuotesUrl('AAPL')).reply(200, { Information: 'any_information' })
+      axiosMock.onGet(manyStockQuotesUrl('TSLA')).reply(200, null)
+      const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      await expect(promise).rejects.toThrow()
+      await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
   })
 })
