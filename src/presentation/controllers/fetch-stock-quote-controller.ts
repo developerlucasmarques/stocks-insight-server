@@ -11,6 +11,7 @@ export class FetchStockQuoteController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      httpRequest.params.stockSymbol = httpRequest.params.stockSymbol.toUpperCase()
       const validationResult = await this.validation.validate(httpRequest.params)
       if (validationResult.isLeft()) {
         return badRequest(validationResult.value)
