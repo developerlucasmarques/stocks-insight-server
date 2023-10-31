@@ -179,4 +179,13 @@ describe('AlphaVantageApi', () => {
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
     })
   })
+
+  describe('fetchManyStockQuotes()', () => {
+    it('Should call axios with correct url', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
+      await sut.fetchStockQuote('AAPL')
+      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE'))
+    })
+  })
 })
