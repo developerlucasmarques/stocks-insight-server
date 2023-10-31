@@ -1,8 +1,8 @@
 import type { Validation } from '@/presentation/contracts'
 import { InvalidDateError } from '@/presentation/errors/invalid-date-error'
-import { right, type Either, left } from '@/shared/either'
+import { left, right, type Either } from '@/shared/either'
 
-export class DateParamValidation implements Validation {
+export class DateFormatValidation implements Validation {
   constructor (private readonly fieldNames: string[]) {}
 
   async validate (input: any): Promise<Either<Error, null>> {

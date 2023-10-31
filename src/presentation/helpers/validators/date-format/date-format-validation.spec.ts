@@ -1,15 +1,15 @@
 import { InvalidDateError } from '@/presentation/errors/invalid-date-error'
-import { DateParamValidation } from './date-param-validation'
+import { DateFormatValidation } from './date-format-validation'
 
 const makeFakeInput = (initialDate: string, finalDate: string): any => (
   { to: initialDate, from: finalDate }
 )
 
-const makeSut = (): DateParamValidation => {
-  return new DateParamValidation(['to', 'from'])
+const makeSut = (): DateFormatValidation => {
+  return new DateFormatValidation(['to', 'from'])
 }
 
-describe('DateParam Validation', () => {
+describe('DateFormat Validation', () => {
   it('Should return InvalidDateError for date with invalid format', async () => {
     const sut = makeSut()
     const result = await sut.validate(makeFakeInput('2023/01/02', '2023/01/03'))
