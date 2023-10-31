@@ -8,7 +8,7 @@ export class AlphaVantageApiHelper {
   static formatStockQuote (data: GlobalStockQuote): StockQuote {
     return {
       name: data['Global Quote']['01. symbol'],
-      lastPrice: Number(Number(data['Global Quote']['05. price']).toFixed(2)),
+      lastPrice: this.parseNumFixed(data['Global Quote']['05. price']),
       pricedAt: data['Global Quote']['07. latest trading day']
     }
   }
@@ -24,14 +24,18 @@ export class AlphaVantageApiHelper {
     const stockHistory: StockHistory = {
       name: data.stockSymbol,
       prices: Object.entries(filteredData).map(([date, dataValue]) => ({
-        opening: Number(parseFloat(dataValue['1. open']).toFixed(2)),
-        low: Number(parseFloat(dataValue['3. low']).toFixed(2)),
-        high: Number(parseFloat(dataValue['2. high']).toFixed(2)),
-        closing: Number(parseFloat(dataValue['4. close']).toFixed(2)),
+        opening: this.parseNumFixed(dataValue['1. open']),
+        low: this.parseNumFixed(dataValue['3. low']),
+        high: this.parseNumFixed(dataValue['2. high']),
+        closing: this.parseNumFixed(dataValue['4. close']),
         pricedAt: date,
-        volume: Number(parseInt(dataValue['5. volume']).toFixed(2))
+        volume: this.parseNumFixed(dataValue['5. volume'])
       }))
     }
     return stockHistory
+  }
+
+  private static parseNumFixed (value: string): number {
+    return Number(parseFloat(value).toFixed(2))
   }
 }
