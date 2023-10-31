@@ -9,7 +9,9 @@ import { StockHistoryNotFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
-    stockSymbol: 'any_stock_symbol',
+    stockSymbol: 'any_stock_symbol'
+  },
+  query: {
     from: '2023-01-02',
     to: '2023-01-03'
   }

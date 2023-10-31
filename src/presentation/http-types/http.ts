@@ -5,5 +5,6 @@ export type HttpResponse = {
 
 export type HttpRequest = {
   params?: any
+  query?: any
   body?: any
 }
