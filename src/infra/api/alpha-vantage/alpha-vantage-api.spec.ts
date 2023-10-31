@@ -5,6 +5,7 @@ import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 import type { DailyStockQuote } from './types/daily-stock-quote'
 import type { FetchStockHistoryData } from '@/domain/contracts'
+import type { StockHistory } from '@/domain/models/stock-history'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -23,6 +24,25 @@ const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
   finalDate: '2023-01-03'
 })
 
+const makeFakeStockHistory = (): StockHistory => ({
+  name: 'AAPL',
+  prices: [{
+    opening: 139.09,
+    low: 138.29,
+    high: 141.10,
+    closing: 140.50,
+    pricedAt: '2023-01-02',
+    volume: 9200
+  }, {
+    opening: 140.50,
+    low: 136.29,
+    high: 143.10,
+    closing: 141.56,
+    pricedAt: '2023-01-03',
+    volume: 12500
+  }]
+})
+
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
     '01. symbol': 'AAPL',
@@ -39,12 +59,21 @@ const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
 })
 
 const makeFakeDailyStockQuote = (): DailyStockQuote => ({
-  '2023-01-01': {
-    '1. open': '172.0200',
-    '2. high': '173.0700',
-    '3. low': '170.3410',
-    '4. close': '171.2100',
-    '5. volume': '51861083'
+  'Time Series (Daily)': {
+    '2023-01-02': {
+      '1. open': '139.0900',
+      '2. high': '141.1000',
+      '3. low': '138.2910',
+      '4. close': '140.5000',
+      '5. volume': '9200'
+    },
+    '2023-01-03': {
+      '1. open': '140.5000',
+      '2. high': '143.1000',
+      '3. low': '136.2910',
+      '4. close': '141.5600',
+      '5. volume': '12500'
+    }
   }
 })
 
@@ -111,6 +140,13 @@ describe('AlphaVantageApi', () => {
       axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, makeFakeDailyStockQuote())
       await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('TIME_SERIES_DAILY', 'full'))
+    })
+
+    it('Should return a StockHistory if fetch stock history is a success', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, makeFakeDailyStockQuote())
+      const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
+      expect(result).toEqual(makeFakeStockHistory())
     })
   })
 })
