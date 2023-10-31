@@ -3,9 +3,13 @@ import { InvalidDateError } from '@/presentation/errors/invalid-date-error'
 import { right, type Either, left } from '@/shared/either'
 
 export class DateParamValidation implements Validation {
+  constructor (private readonly fieldNames: string[]) {}
+
   async validate (input: any): Promise<Either<Error, null>> {
-    if (!this.isValidDate(input.to)) {
-      return left(new InvalidDateError(input.to))
+    for (const field of this.fieldNames) {
+      if (!this.isValidDate(input[field])) {
+        return left(new InvalidDateError(input[field]))
+      }
     }
     return right(null)
   }
