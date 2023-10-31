@@ -11,6 +11,6 @@ export class FetchStockComparisonUseCase implements FetchStockComparison {
     if (stockQuotes.length === 0) {
       return left(new NoStockQuoteFoundError())
     }
-    return right({ lastPrices: [] })
+    return right({ lastPrices: stockQuotes })
   }
 }
