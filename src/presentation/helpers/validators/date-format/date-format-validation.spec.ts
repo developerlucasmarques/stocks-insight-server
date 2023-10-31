@@ -40,6 +40,12 @@ describe('DateFormat Validation', () => {
     expect(result.value).toEqual(new InvalidDateFormatError('2023--02'))
   })
 
+  it('Should return InvalidDateFormatError for date with invalid format (month greater than 12)', async () => {
+    const sut = makeSut()
+    const result = await sut.validate(makeFakeInput('2023-13-02', '2023/01/03'))
+    expect(result.value).toEqual(new InvalidDateFormatError('2023-13-02'))
+  })
+
   it('Should return InvalidDateFormatError for date with invalid format (extra characters)', async () => {
     const sut = makeSut()
     const result = await sut.validate(makeFakeInput('2023-01-02-extra', '2023/01/03'))
