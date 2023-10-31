@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
 import type { Controller, Validation } from '../../contracts'
 import type { HttpRequest, HttpResponse } from '../../http-types/http'
 import type { FetchStockHistory } from '@/domain/contracts'
@@ -16,7 +16,12 @@ export class FetchStockHistoryController implements Controller {
         return badRequest(validationResult.value)
       }
       const { stockSymbol, from: initialDate, to: finalDate } = httpRequest.params
-      await this.fetchStockHistory.perform({ stockSymbol, initialDate, finalDate })
+      const fetchStockHistoryResult = await this.fetchStockHistory.perform({
+        stockSymbol, initialDate, finalDate
+      })
+      if (fetchStockHistoryResult.isLeft()) {
+        return notFound(fetchStockHistoryResult.value)
+      }
       return { statusCode: 0, body: '' }
     } catch (error: any) {
       return serverError(error)
