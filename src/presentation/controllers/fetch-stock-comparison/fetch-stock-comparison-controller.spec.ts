@@ -1,8 +1,10 @@
-import { right, type Either, left } from '@/shared/either'
+import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
+import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
-import type { HttpRequest } from '@/presentation/http-types/http'
-import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
 import { badRequest } from '@/presentation/helpers/http/http-helper'
+import type { HttpRequest } from '@/presentation/http-types/http'
+import { left, right, type Either } from '@/shared/either'
+import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -11,6 +13,18 @@ const makeFakeRequest = (): HttpRequest => ({
   query: {
     stocksToCompare: 'another_stock,other_stock'
   }
+})
+
+const makeFakeStockComparison = (): StockComparison => ({
+  lastPrices: [{
+    name: 'any_stock',
+    lastPrice: 120.99,
+    pricedAt: 'any_priced_at'
+  }, {
+    name: 'another_stock',
+    lastPrice: 133.99,
+    pricedAt: 'any_priced_at'
+  }]
 })
 
 const makeParamsValidation = (): Validation => {
@@ -31,17 +45,32 @@ const makeQueryValidation = (): Validation => {
   return new QueryValidationStub()
 }
 
+const makeFetchStockComparison = (): FetchStockComparison => {
+  class FetchStockComparisonStub implements FetchStockComparison {
+    async perform (data: FetchStockComparisonData): Promise<FetchStockComparisonResponse> {
+      return await Promise.resolve(right(makeFakeStockComparison()))
+    }
+  }
+  return new FetchStockComparisonStub()
+}
+
 type SutTypes = {
   sut: FetchStockComparisonController
   paramsValidationStub: Validation
   queryValidationStub: Validation
+  fetchStockComparisonStub: FetchStockComparison
 }
 
 const makeSut = (): SutTypes => {
   const paramsValidationStub = makeParamsValidation()
   const queryValidationStub = makeQueryValidation()
-  const sut = new FetchStockComparisonController(paramsValidationStub, queryValidationStub)
-  return { sut, paramsValidationStub, queryValidationStub }
+  const fetchStockComparisonStub = makeFetchStockComparison()
+  const sut = new FetchStockComparisonController(
+    paramsValidationStub, queryValidationStub, fetchStockComparisonStub
+  )
+  return {
+    sut, paramsValidationStub, queryValidationStub, fetchStockComparisonStub
+  }
 }
 
 describe('FetchStockComparison Controller', () => {
@@ -65,8 +94,7 @@ describe('FetchStockComparison Controller', () => {
     const { sut, queryValidationStub } = makeSut()
     const validateSpy = jest.spyOn(queryValidationStub, 'validate')
     await sut.handle(makeFakeRequest())
-    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'another_stock' })
-    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'other_stock' })
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().query)
   })
 
   it('Should return 400 if Query Validation fails', async () => {
@@ -76,5 +104,15 @@ describe('FetchStockComparison Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should call FetchStockHistory with correct values', async () => {
+    const { sut, fetchStockComparisonStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith({
+      stockSymbol: 'any_stock_symbol',
+      stocksToCompare: ['another_stock', 'other_stock']
+    })
   })
 })
