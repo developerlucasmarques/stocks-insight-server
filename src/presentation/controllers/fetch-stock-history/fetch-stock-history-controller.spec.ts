@@ -1,4 +1,4 @@
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import { left, right, type Either } from '@/shared/either'
 import type { Validation } from '../../contracts'
 import type { HttpRequest } from '../../http-types/http'
@@ -120,5 +120,11 @@ describe('FetchStockHistory Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should return 200 if FetchStockHistory is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeStockHistory()))
   })
 })
