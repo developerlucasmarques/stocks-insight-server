@@ -169,4 +169,13 @@ describe('FetchStockComparison Controller', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(notFound(new NoStockQuoteFoundError()))
   })
+
+  it('Should return 500 if FetchStockComparison throws', async () => {
+    const { sut, fetchStockComparisonStub } = makeSut()
+    jest.spyOn(fetchStockComparisonStub, 'perform').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
 })
