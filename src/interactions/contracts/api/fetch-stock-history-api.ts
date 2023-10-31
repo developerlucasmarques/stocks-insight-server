@@ -2,5 +2,5 @@ import type { FetchStockHistoryData } from '@/domain/contracts/fetch-stock-histo
 import type { StockHistory } from '@/domain/models/stock-history'
 
 export interface FetchStockHistoryApi {
-  fetchStockQuote: (data: FetchStockHistoryData) => Promise<null | StockHistory>
+  fetchStockHistory: (data: FetchStockHistoryData) => Promise<null | StockHistory>
 }
