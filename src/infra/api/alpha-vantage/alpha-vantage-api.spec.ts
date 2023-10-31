@@ -255,5 +255,13 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should throw if second consult axios throws', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(manyStockQuotesUrl('AAPL')).reply(200, null)
+      axiosMock.onGet(manyStockQuotesUrl('TSLA')).reply(404)
+      const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
