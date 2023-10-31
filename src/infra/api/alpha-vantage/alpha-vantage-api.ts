@@ -12,7 +12,6 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
   async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
     const url = this.makeUrl('GLOBAL_QUOTE', stockSymbol)
     const response = await axios.get(url)
-    console.log(response.data)
     if (!response.data) {
       return null
     }
