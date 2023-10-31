@@ -219,12 +219,24 @@ describe('AlphaVantageApi', () => {
       expect(axiosMock.history.get[1].url).toBe(makeFakeUrl('GLOBAL_QUOTE', 'TSLA'))
     })
 
-    it('Should return a StockQuote array if fetch many stock quote is a success', async () => {
+    it('Should return StockQuote array if fetch many stock quote is a success', async () => {
       const sut = makeSut()
       axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, makeFakeGlobalStockQuote())
       axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, makeFakeGlobalStockQuote2())
       const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       expect(result).toEqual(makeFakeStockQuotes())
+    })
+
+    it('Should return an StockQuote if fetch many stock quote not found one stock', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, makeFakeGlobalStockQuote())
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, null)
+      const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      expect(result).toEqual([{
+        name: 'AAPL',
+        lastPrice: 166.89,
+        pricedAt: '2023-01-01'
+      }])
     })
   })
 })
