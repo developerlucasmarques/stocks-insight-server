@@ -1,5 +1,5 @@
 import type { FetchStockComparison, FetchStockComparisonResponse } from '@/domain/contracts'
-import type { FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api/fetch-many-stock-quotes-by-symbols-api'
+import type { FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api'
 import { right } from '@/shared/either'
 
 export class FetchStockComparisonUseCase implements FetchStockComparison {

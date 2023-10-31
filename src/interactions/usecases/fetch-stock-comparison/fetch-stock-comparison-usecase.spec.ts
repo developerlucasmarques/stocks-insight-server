@@ -1,5 +1,5 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
-import { type FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api/fetch-many-stock-quotes-by-symbols-api'
+import { type FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api'
 import { FetchStockComparisonUseCase } from './fetch-stock-comparison-usecase'
 
 const makeFakeStockSymbols = (): string[] => (['any_stock', 'another_stock'])
