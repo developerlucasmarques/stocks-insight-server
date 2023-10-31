@@ -128,4 +128,17 @@ describe('FetchStockComparison Controller', () => {
       stocksToCompare: ['another_stock']
     })
   })
+
+  it('Should call FetchStockHistory without any empty stocksToCompare', async () => {
+    const { sut, fetchStockComparisonStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
+    await sut.handle({
+      params: { stockSymbol: 'any_stock_symbol' },
+      query: { stocksToCompare: 'another_stock,,,,other,,,,other_stock' }
+    })
+    expect(performSpy).toHaveBeenCalledWith({
+      stockSymbol: 'any_stock_symbol',
+      stocksToCompare: ['another_stock', 'other', 'other_stock']
+    })
+  })
 })
