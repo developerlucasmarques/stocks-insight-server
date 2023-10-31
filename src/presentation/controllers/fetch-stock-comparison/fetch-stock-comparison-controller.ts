@@ -21,15 +21,15 @@ export class FetchStockComparisonController implements Controller {
         return badRequest(validation.value)
       }
     }
-    const stockSymbol = httpRequest.params.stockSymbol
     const stocksToCompare = httpRequest.query.stocksToCompare as string
-    let stocksToCompareSplit: string[] = []
+    let stocksToCompareArray: string[] = []
     if (stocksToCompare.includes(',')) {
-      stocksToCompareSplit = stocksToCompare.split(',')
+      const split = stocksToCompare.split(',')
+      stocksToCompareArray = split.filter(stock => stock.trim() !== '')
     }
     await this.fetchStockComparison.perform({
-      stockSymbol,
-      stocksToCompare: (stocksToCompareSplit.length > 0) ? stocksToCompareSplit : [stocksToCompare]
+      stockSymbol: httpRequest.params.stockSymbol,
+      stocksToCompare: (stocksToCompareArray.length > 0) ? stocksToCompareArray : [stocksToCompare]
     })
     return { statusCode: 0, body: '' }
   }
