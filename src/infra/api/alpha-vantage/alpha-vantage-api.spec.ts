@@ -5,6 +5,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { DailyStockQuote, GlobalStockQuote } from './types'
+import { type StockQuote } from '@/domain/models/stock-quote'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -41,6 +42,16 @@ const makeFakeStockHistory = (): StockHistory => ({
   }]
 })
 
+const makeFakeStockQuotes = (): StockQuote[] => ([{
+  name: 'AAPL',
+  lastPrice: 166.89,
+  pricedAt: '2023-01-01'
+}, {
+  name: 'TSLA',
+  lastPrice: 167.09,
+  pricedAt: '2023-01-01'
+}])
+
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
     '01. symbol': 'AAPL',
@@ -62,7 +73,7 @@ const makeFakeGlobalStockQuote2 = (): GlobalStockQuote => ({
     '02. open': '170.3700',
     '03. high': '171.3775',
     '04. low': '165.6700',
-    '05. price': '166.8900',
+    '05. price': '167.0900',
     '06. volume': '70625258',
     '07. latest trading day': '2023-01-01',
     '08. previous close': '171.1000',
@@ -206,6 +217,14 @@ describe('AlphaVantageApi', () => {
       await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE', 'AAPL'))
       expect(axiosMock.history.get[1].url).toBe(makeFakeUrl('GLOBAL_QUOTE', 'TSLA'))
+    })
+
+    it('Should return a StockQuote array if fetch many stock quote is a success', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, makeFakeGlobalStockQuote())
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, makeFakeGlobalStockQuote2())
+      const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      expect(result).toEqual(makeFakeStockQuotes())
     })
   })
 })
