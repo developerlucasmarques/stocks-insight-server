@@ -3,14 +3,22 @@ import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
+import type { DailyStockQuote } from './types/daily-stock-quote'
+import type { FetchStockHistoryData } from '@/domain/contracts'
 
 const apiKey = 'any_api_key'
+const baseUrl = 'https://www.alphavantage.co/query?function='
+const symbol = 'AAPL'
 
 const makeFakeUrl = (func: string): string => {
-  const symbol = 'AAPL'
-  const baseUrl = 'https://www.alphavantage.co/query?function='
   return `${baseUrl}${func}&symbol=${symbol}&apikey=${apiKey}`
 }
+
+const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
+  stockSymbol: 'AAPL',
+  initialDate: '2023-01-02',
+  finalDate: '2023-01-03'
+})
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -24,6 +32,16 @@ const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
     '08. previous close': '171.1000',
     '09. change': '-4.2100',
     '10. change percent': '-2.4605%'
+  }
+})
+
+const makeFakeDailyStockQuote = (): DailyStockQuote => ({
+  '2023-01-01': {
+    '1. open': '172.0200',
+    '2. high': '173.0700',
+    '3. low': '170.3410',
+    '4. close': '171.2100',
+    '5. volume': '51861083'
   }
 })
 
@@ -81,6 +99,16 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchStockQuote('AAPL')
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
+  })
+
+  describe('fetchStockHistory()', () => {
+    it('Should call axios with correct url', async () => {
+      const sut = makeSut()
+      const url = `${baseUrl}TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${apiKey}`
+      axiosMock.onGet(url).reply(200, makeFakeDailyStockQuote())
+      await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
+      expect(axiosMock.history.get[0].url).toBe(url)
     })
   })
 })
