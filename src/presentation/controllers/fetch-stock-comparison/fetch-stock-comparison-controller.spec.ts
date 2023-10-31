@@ -115,4 +115,17 @@ describe('FetchStockComparison Controller', () => {
       stocksToCompare: ['another_stock', 'other_stock']
     })
   })
+
+  it('Should call FetchStockHistory with just one stock to compare', async () => {
+    const { sut, fetchStockComparisonStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
+    await sut.handle({
+      params: { stockSymbol: 'any_stock_symbol' },
+      query: { stocksToCompare: 'another_stock' }
+    })
+    expect(performSpy).toHaveBeenCalledWith({
+      stockSymbol: 'any_stock_symbol',
+      stocksToCompare: ['another_stock']
+    })
+  })
 })
