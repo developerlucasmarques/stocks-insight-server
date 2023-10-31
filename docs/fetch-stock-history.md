@@ -23,15 +23,15 @@ Esta funcionalidade permite aos usuários obter o preço histórico de uma açã
 - `GET /stocks/AAPL/history?from=2015-03-01&to=2023-03-01`
 
 ## Caso de sucesso
-- ❌ Busca o símbolo da ação desejada em cache.
-- ❌ Valida se o símbolo da ação existe.
-- ❌ Valida a data de início do período desejado.
-- ❌ Valida a data de término do período desejado.
-- ❌ Busca os dados da ação no período determinado na API (https://www.alphavantage.co).
+- ✅ Busca o símbolo da ação desejada em cache.
+- ✅ Valida se o símbolo da ação existe.
+- ✅ Valida a data de início do período desejado.
+- ✅ Valida a data de término do período desejado.
+- ✅ Busca os dados da ação no período determinado na API (https://www.alphavantage.co).
 
 ### Resposta
-- ❌ Código de status: **200 OK**
-- ❌ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
+- ✅ Código de status: **200 OK**
+- ✅ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
 
 Exemplo:
 
@@ -56,13 +56,13 @@ Exemplo:
 
 ### Respostas
 - Código de status: **400 Bad Request**
-  - ❌ Se o símbolo da ação for inválido.
-  - ❌ Se a data de início do período desejado for inválida.
-  - ❌ Se a data de término do período desejado for inválida.
+  - ✅ Se o símbolo da ação for inválido.
+  - ✅ Se a data de início do período desejado for inválida.
+  - ✅ Se a data de término do período desejado for inválida.
 - Código de status: **404 Not Found**
-  - ❌ Se o símbolo da ação não for encontrado.
-  - ❌ Se não houver dados disponíveis para o período especificado.
+  - ✅ Se o símbolo da ação não for encontrado.
+  - ✅ Se não houver dados disponíveis para o período especificado.
 - Código de status: **500 Internal Server Error**
-  - ❌ Em caso de erro ao fazer busca do símbolo em cache.
-  - ❌ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
-  - ❌ Em caso de erro interno no servidor.
+  - ✅ Em caso de erro ao fazer busca do símbolo em cache.
+  - ✅ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
+  - ✅ Em caso de erro interno no servidor.
