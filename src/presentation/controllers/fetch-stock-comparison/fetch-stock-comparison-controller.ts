@@ -1,4 +1,4 @@
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
 import type { Controller, Validation } from '@/presentation/contracts'
 import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 import type { Either } from '@/shared/either'
@@ -28,10 +28,13 @@ export class FetchStockComparisonController implements Controller {
         const split = stocksToCompare.split(',')
         stocksToCompareArray = split.filter(stock => stock.trim() !== '')
       }
-      await this.fetchStockComparison.perform({
+      const fetchStockComparisonResult = await this.fetchStockComparison.perform({
         stockSymbol: httpRequest.params.stockSymbol,
         stocksToCompare: (stocksToCompareArray.length > 0) ? stocksToCompareArray : [stocksToCompare]
       })
+      if (fetchStockComparisonResult.isLeft()) {
+        return notFound(fetchStockComparisonResult.value)
+      }
       return { statusCode: 0, body: '' }
     } catch (error: any) {
       return serverError(error)
