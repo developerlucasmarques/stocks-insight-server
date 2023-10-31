@@ -5,6 +5,7 @@ import type { FetchStockHistoryApi, FetchStockQuoteBySymbolApi } from '@/interac
 import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
+import { AlphaVantageApiHelper } from './helpers/alpha-vantage-api-helper'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
@@ -28,11 +29,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
       throw new MaximumLimitReachedError(response.data)
     }
     const data: GlobalStockQuote = response.data
-    return {
-      name: data['Global Quote']['01. symbol'],
-      lastPrice: Number(Number(data['Global Quote']['05. price']).toFixed(2)),
-      pricedAt: data['Global Quote']['07. latest trading day']
-    }
+    return AlphaVantageApiHelper.formatStockQuote(data)
   }
 
   async fetchStockHistory (data: FetchStockHistoryData): Promise<null | StockHistory> {
