@@ -2,6 +2,7 @@ import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/ht
 import type { Controller, Validation } from '../../contracts'
 import type { HttpRequest, HttpResponse } from '../../http-types/http'
 import type { FetchStockHistory } from '@/domain/contracts'
+import { type Either } from '@/shared/either'
 
 export class FetchStockHistoryController implements Controller {
   constructor (
@@ -12,11 +13,15 @@ export class FetchStockHistoryController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const paramsValidationResult = await this.paramsValidation.validate(httpRequest.params)
-      if (paramsValidationResult.isLeft()) {
-        return badRequest(paramsValidationResult.value)
+      const validations: Array<Either<Error, null>> = [
+        await this.paramsValidation.validate(httpRequest.params),
+        await this.queryValidation.validate(httpRequest.query)
+      ]
+      for (const validation of validations) {
+        if (validation.isLeft()) {
+          return badRequest(validation.value)
+        }
       }
-      await this.queryValidation.validate(httpRequest.query)
       const { stockSymbol } = httpRequest.params
       const { from: initialDate, to: finalDate } = httpRequest.query
       const fetchStockHistoryResult = await this.fetchStockHistory.perform({
