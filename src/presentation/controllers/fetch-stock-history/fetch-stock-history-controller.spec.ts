@@ -3,6 +3,8 @@ import { left, right, type Either } from '@/shared/either'
 import type { Validation } from '../../contracts'
 import type { HttpRequest } from '../../http-types/http'
 import { FetchStockHistoryController } from './fetch-stock-history-controller'
+import type { FetchStockHistory, FetchStockHistoryData, FetchStockHistoryResponse } from '@/domain/contracts'
+import { type StockHistory } from '@/domain/models/stock-history'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -10,6 +12,31 @@ const makeFakeRequest = (): HttpRequest => ({
     from: '2023-01-02',
     to: '2023-01-03'
   }
+})
+
+const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
+  stockSymbol: 'any_stock_symbol',
+  initialDate: '2023-01-02',
+  finalDate: '2023-01-03'
+})
+
+const makeFakeStockHistory = (): StockHistory => ({
+  name: 'any_stock_symbol',
+  prices: [{
+    opening: 139.09,
+    low: 138.29,
+    high: 141.10,
+    closing: 140.50,
+    pricedAt: '2023-01-02',
+    volume: 9200
+  }, {
+    opening: 140.50,
+    low: 136.29,
+    high: 143.10,
+    closing: 141.56,
+    pricedAt: '2023-01-03',
+    volume: 12500
+  }]
 })
 
 const makeValidation = (): Validation => {
@@ -21,15 +48,26 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
+const makeFetchStockHistory = (): FetchStockHistory => {
+  class FetchStockHistoryStub implements FetchStockHistory {
+    async perform (data: FetchStockHistoryData): Promise<FetchStockHistoryResponse> {
+      return await Promise.resolve(right(makeFakeStockHistory()))
+    }
+  }
+  return new FetchStockHistoryStub()
+}
+
 type SutTypes = {
   sut: FetchStockHistoryController
   validationStub: Validation
+  fetchStockHistoryStub: FetchStockHistory
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const sut = new FetchStockHistoryController(validationStub)
-  return { sut, validationStub }
+  const fetchStockHistoryStub = makeFetchStockHistory()
+  const sut = new FetchStockHistoryController(validationStub, fetchStockHistoryStub)
+  return { sut, validationStub, fetchStockHistoryStub }
 }
 
 describe('FetchStockHistory Controller', () => {
@@ -37,11 +75,7 @@ describe('FetchStockHistory Controller', () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
     await sut.handle(makeFakeRequest())
-    expect(validateSpy).toHaveBeenCalledWith({
-      stockSymbol: 'any_stock_symbol',
-      from: '2023-01-02',
-      to: '2023-01-03'
-    })
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().params)
   })
 
   it('Should return 400 if Validation fails', async () => {
@@ -60,5 +94,12 @@ describe('FetchStockHistory Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should call FetchStockHistory with correct values', async () => {
+    const { sut, fetchStockHistoryStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockHistoryStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith(makeFakeFetchStockHistoryData())
   })
 })
