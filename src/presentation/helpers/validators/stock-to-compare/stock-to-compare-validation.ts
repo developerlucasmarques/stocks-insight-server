@@ -1,6 +1,7 @@
 import type { FetchStockSymbolCache } from '@/interactions/contracts/cache'
 import type { Validation } from '@/presentation/contracts'
-import { right, type Either } from '@/shared/either'
+import { InvalidStockSymbolError } from '@/presentation/errors'
+import { right, type Either, left } from '@/shared/either'
 
 export class StockToCompareValidation implements Validation {
   constructor (private readonly fetchStockSymbolCache: FetchStockSymbolCache) {}
@@ -14,7 +15,10 @@ export class StockToCompareValidation implements Validation {
     }
     if (stocksToCompareArray.length > 0) {
       for (const stock of stocksToCompareArray) {
-        await this.fetchStockSymbolCache.fetchOneSymbol(stock)
+        const stockSymbol = await this.fetchStockSymbolCache.fetchOneSymbol(stock)
+        if (!stockSymbol) {
+          return left(new InvalidStockSymbolError(stock))
+        }
       }
     }
 
