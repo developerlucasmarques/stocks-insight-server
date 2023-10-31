@@ -43,12 +43,21 @@ describe('FetchStockComparison UseCase', () => {
     expect(fetchStockQuoteSpy).toHaveBeenCalledWith(makeFakeStockSymbols())
   })
 
-  it('Should return NoStockQuoteFoundError if FetchStockQuoteBySymbolApi is empty', async () => {
+  it('Should return NoStockQuoteFoundError if FetchManyStockQuotesBySymbolsApi is empty', async () => {
     const { sut, fetchManyStockQuotesBySymbolsApiStub } = makeSut()
     jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes').mockReturnValueOnce(
       Promise.resolve([])
     )
     const result = await sut.perform(makeFakeStockSymbols())
     expect(result.value).toEqual(new NoStockQuoteFoundError())
+  })
+
+  it('Should throw if FetchManyStockQuotesBySymbolsApi throws', async () => {
+    const { sut, fetchManyStockQuotesBySymbolsApiStub } = makeSut()
+    jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFakeStockSymbols())
+    await expect(promise).rejects.toThrow()
   })
 })
