@@ -1,4 +1,4 @@
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { Controller, Validation } from '@/presentation/contracts'
 import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 import type { Either } from '@/shared/either'
@@ -35,7 +35,7 @@ export class FetchStockComparisonController implements Controller {
       if (fetchStockComparisonResult.isLeft()) {
         return notFound(fetchStockComparisonResult.value)
       }
-      return { statusCode: 0, body: '' }
+      return ok(fetchStockComparisonResult.value)
     } catch (error: any) {
       return serverError(error)
     }
