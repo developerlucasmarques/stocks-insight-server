@@ -18,7 +18,7 @@ Esta funcionalidade permite aos usuários obter o preço histórico de uma açã
 
 ### Exemplos de Requisições
 
-- `GET /stocks/IBM/history?from=2023-01-01&to=2023-01-31`
+- `GET /stocks/AMZN/history?from=2023-01-01&to=2023-01-31`
 - `GET /stocks/TSLA/history?from=2023-02-20&to=2023-03-20`
 - `GET /stocks/AAPL/history?from=2015-03-01&to=2023-03-01`
 
@@ -37,7 +37,7 @@ Exemplo:
 
 ```json
 {
-  "name": "IBM",
+  "name": "AMZN",
   "prices": [
     {
       "opening": 139.09,
@@ -56,6 +56,7 @@ Exemplo:
 
 ### Respostas
 - Código de status: **400 Bad Request**
+  - ❌ Se o símbolo da ação for inválido.
   - ❌ Se a data de início do período desejado for inválida.
   - ❌ Se a data de término do período desejado for inválida.
 - Código de status: **404 Not Found**
