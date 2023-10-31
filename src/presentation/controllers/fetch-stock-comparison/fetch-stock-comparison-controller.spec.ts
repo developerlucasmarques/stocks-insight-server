@@ -90,6 +90,15 @@ describe('FetchStockComparison Controller', () => {
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
   })
 
+  it('Should return 500 if Params Validation throws', async () => {
+    const { sut, paramsValidationStub } = makeSut()
+    jest.spyOn(paramsValidationStub, 'validate').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
   it('Should call Query Validation with correct values', async () => {
     const { sut, queryValidationStub } = makeSut()
     const validateSpy = jest.spyOn(queryValidationStub, 'validate')
