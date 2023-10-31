@@ -1,7 +1,7 @@
 import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
 import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
@@ -177,5 +177,11 @@ describe('FetchStockComparison Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should return 200 if FetchStockComparison is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeStockComparison()))
   })
 })
