@@ -2,7 +2,7 @@ import type { FetchStockHistoryData } from '@/domain/contracts/fetch-stock-histo
 import type { StockHistory } from '@/domain/models/stock-history'
 import type { FetchStockHistoryApi } from '@/interactions/contracts/api'
 import { FetchStockHistoryUseCase } from './fetch-stock-history-usecase'
-import { StockHistoryNotFoundError } from '@/domain/errors/stock-history-not-found-error'
+import { StockHistoryNotFoundError } from '@/domain/errors'
 
 const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
   stockSymbol: 'any_stock_symbol',

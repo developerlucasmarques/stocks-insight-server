@@ -1,5 +1,5 @@
-import type { FetchStockHistory, FetchStockHistoryData, FetchStockHistoryResponse } from '@/domain/contracts/fetch-stock-history'
-import { StockHistoryNotFoundError } from '@/domain/errors/stock-history-not-found-error'
+import type { FetchStockHistory, FetchStockHistoryData, FetchStockHistoryResponse } from '@/domain/contracts'
+import { StockHistoryNotFoundError } from '@/domain/errors'
 import type { FetchStockHistoryApi } from '@/interactions/contracts/api'
 import { left, right } from '@/shared/either'
 
