@@ -1,5 +1,5 @@
 import type { Validation } from '@/presentation/contracts'
-import { InvalidDateError } from '@/presentation/errors/invalid-date-error'
+import { InvalidDateFormatError } from '@/presentation/errors'
 import { left, right, type Either } from '@/shared/either'
 
 export class DateFormatValidation implements Validation {
@@ -8,7 +8,7 @@ export class DateFormatValidation implements Validation {
   async validate (input: any): Promise<Either<Error, null>> {
     for (const field of this.fieldNames) {
       if (!this.isValidDate(input[field])) {
-        return left(new InvalidDateError(input[field]))
+        return left(new InvalidDateFormatError(input[field]))
       }
     }
     return right(null)

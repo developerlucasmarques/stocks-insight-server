@@ -1,5 +1,5 @@
 export * from './invalid-stock-symbol-error'
 export * from './server-error'
 export * from './missing-param-error'
-export * from './invalid-date-error'
+export * from './invalid-date-format-error'
 export * from './invalid-date-range-error'
