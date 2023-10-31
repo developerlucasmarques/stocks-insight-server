@@ -1,10 +1,10 @@
+import { type FetchStockHistoryData } from '@/domain/contracts'
+import { type StockHistory } from '@/domain/models/stock-history'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { FetchStockHistoryApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
-import { type StockHistory } from '@/domain/models/stock-history'
-import { type FetchStockHistoryData } from '@/domain/contracts'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
@@ -37,7 +37,25 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
 
   async fetchStockHistory (data: FetchStockHistoryData): Promise<null | StockHistory> {
     const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
-    await axios.get(url)
-    return null
+    const response = await axios.get(url)
+    const value = response.data['Time Series (Daily)']
+    const filteredData: Record<string, any> = {}
+    for (const date in value) {
+      if (date >= data.initialDate && date <= data.finalDate) {
+        filteredData[date] = value[date]
+      }
+    }
+    const stockHistory: StockHistory = {
+      name: data.stockSymbol,
+      prices: Object.entries(filteredData).map(([date, dataValue]) => ({
+        opening: Number(parseFloat(dataValue['1. open']).toFixed(2)),
+        low: Number(parseFloat(dataValue['3. low']).toFixed(2)),
+        high: Number(parseFloat(dataValue['2. high']).toFixed(2)),
+        closing: Number(parseFloat(dataValue['4. close']).toFixed(2)),
+        pricedAt: date,
+        volume: Number(parseInt(dataValue['5. volume']).toFixed(2))
+      }))
+    }
+    return stockHistory
   }
 }
