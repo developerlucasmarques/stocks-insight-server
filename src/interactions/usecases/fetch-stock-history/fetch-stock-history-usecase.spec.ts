@@ -2,6 +2,7 @@ import type { FetchStockHistoryData } from '@/domain/contracts/fetch-stock-histo
 import type { StockHistory } from '@/domain/models/stock-history'
 import type { FetchStockHistoryApi } from '@/interactions/contracts/api'
 import { FetchStockHistoryUseCase } from './fetch-stock-history-usecase'
+import { StockHistoryNotFoundError } from '@/domain/errors/stock-history-not-found-error'
 
 const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
   stockSymbol: 'any_stock_symbol',
@@ -54,5 +55,14 @@ describe('FetchStockHistory UseCase', () => {
     const fetchStockHistorySpy = jest.spyOn(fetchStockHistoryApiStub, 'fetchStockHistory')
     await sut.perform(makeFakeFetchStockHistoryData())
     expect(fetchStockHistorySpy).toHaveBeenCalledWith(makeFakeFetchStockHistoryData())
+  })
+
+  it('Should return StockHistoryNotFoundError if FetchStockHistoryApi returns null', async () => {
+    const { sut, fetchStockHistoryApiStub } = makeSut()
+    jest.spyOn(fetchStockHistoryApiStub, 'fetchStockHistory').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const result = await sut.perform(makeFakeFetchStockHistoryData())
+    expect(result.value).toEqual(new StockHistoryNotFoundError(makeFakeFetchStockHistoryData()))
   })
 })
