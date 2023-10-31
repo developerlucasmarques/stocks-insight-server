@@ -20,8 +20,12 @@ export class StockToCompareValidation implements Validation {
           return left(new InvalidStockSymbolError(stock))
         }
       }
+      return right(null)
     }
-
-    return await Promise.resolve(right(null))
+    const stockSymbol = await this.fetchStockSymbolCache.fetchOneSymbol(stocksToCompare)
+    if (!stockSymbol) {
+      return left(new InvalidStockSymbolError(stocksToCompare))
+    }
+    return right(null)
   }
 }
