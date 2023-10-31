@@ -1,6 +1,7 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
+import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 
 const apiKey = 'any_api_key'
@@ -71,5 +72,13 @@ describe('AlphaVantageApi', () => {
     axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(404)
     const promise = sut.fetchStockQuote('AAPL')
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should throw if AlphaVantage return Information field', async () => {
+    const sut = makeSut()
+    axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, { Information: 'any_information' })
+    const promise = sut.fetchStockQuote('AAPL')
+    await expect(promise).rejects.toThrow()
+    await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
   })
 })
