@@ -1,13 +1,11 @@
 import type { Validation } from '@/presentation/contracts'
-import { stockSymbolValidationFactory } from '../../validators/stock-symbol-validation-factory'
-import { validationCompositeFactory } from '../../validators/validation-composite-factory'
 import { dateFormatValidationFactory } from '../../validators/date-format-validation-factory'
 import { dateRangeValidationFactory } from '../../validators/date-range-validation-factory'
+import { validationCompositeFactory } from '../../validators/validation-composite-factory'
 
-export const fetchStockHistoryValidationFactory = (): Validation => {
+export const fetchStockHistoryQueryValidationFactory = (): Validation => {
   const validations: Validation[] = []
   validations.push(
-    stockSymbolValidationFactory(),
     dateFormatValidationFactory(['from', 'to']),
     dateRangeValidationFactory('from', 'to')
   )
