@@ -56,6 +56,21 @@ const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   }
 })
 
+const makeFakeGlobalStockQuote2 = (): GlobalStockQuote => ({
+  'Global Quote': {
+    '01. symbol': 'TSLA',
+    '02. open': '170.3700',
+    '03. high': '171.3775',
+    '04. low': '165.6700',
+    '05. price': '166.8900',
+    '06. volume': '70625258',
+    '07. latest trading day': '2023-01-01',
+    '08. previous close': '171.1000',
+    '09. change': '-4.2100',
+    '10. change percent': '-2.4605%'
+  }
+})
+
 const makeFakeDailyStockQuote = (): DailyStockQuote => ({
   'Time Series (Daily)': {
     '2023-01-02': {
@@ -180,6 +195,17 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
+  })
+
+  describe('fetchManyStockQuotes()', () => {
+    it('Should call axios with correct url for each stock symbol received', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, makeFakeGlobalStockQuote())
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, makeFakeGlobalStockQuote2())
+      await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE', 'AAPL'))
+      expect(axiosMock.history.get[1].url).toBe(makeFakeUrl('GLOBAL_QUOTE', 'TSLA'))
     })
   })
 })
