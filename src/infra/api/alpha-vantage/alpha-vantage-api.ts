@@ -50,8 +50,8 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
   }
 
   async fetchManyStockQuotes (stockSymbols: string[]): Promise<StockQuote[]> {
-    for (const symbol of stockSymbols) {
-      await this.fetchStockQuote(symbol)
+    for (const stock of stockSymbols) {
+      await this.fetchStockQuote(stock)
     }
     return []
   }
