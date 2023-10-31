@@ -1,7 +1,7 @@
 import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
 import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest } from '@/presentation/helpers/http/http-helper'
+import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
@@ -104,6 +104,15 @@ describe('FetchStockComparison Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 500 if Query Validation throws', async () => {
+    const { sut, queryValidationStub } = makeSut()
+    jest.spyOn(queryValidationStub, 'validate').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
   })
 
   it('Should call FetchStockHistory with correct values', async () => {
