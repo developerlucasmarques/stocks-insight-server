@@ -2,6 +2,12 @@ import type { StockQuote } from '@/domain/models/stock-quote'
 import { type FetchManyStockQuotesBySymbolsApi } from '@/interactions/contracts/api'
 import { FetchStockComparisonUseCase } from './fetch-stock-comparison-usecase'
 import { NoStockQuoteFoundError } from '@/domain/errors'
+import { type FetchStockComparisonData } from '@/domain/contracts'
+
+const makeFakeFetchStockComparisonData = (): FetchStockComparisonData => ({
+  stockSymbol: 'any_stock',
+  stocksToCompare: ['another_stock']
+})
 
 const makeFakeStockSymbols = (): string[] => (['any_stock', 'another_stock'])
 
@@ -39,7 +45,7 @@ describe('FetchStockComparison UseCase', () => {
   it('Should call FetchManyStockQuotesBySymbolsApi with correct stock symbols', async () => {
     const { sut, fetchManyStockQuotesBySymbolsApiStub } = makeSut()
     const fetchStockQuoteSpy = jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes')
-    await sut.perform(makeFakeStockSymbols())
+    await sut.perform(makeFakeFetchStockComparisonData())
     expect(fetchStockQuoteSpy).toHaveBeenCalledWith(makeFakeStockSymbols())
   })
 
@@ -48,7 +54,7 @@ describe('FetchStockComparison UseCase', () => {
     jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes').mockReturnValueOnce(
       Promise.resolve([])
     )
-    const result = await sut.perform(makeFakeStockSymbols())
+    const result = await sut.perform(makeFakeFetchStockComparisonData())
     expect(result.value).toEqual(new NoStockQuoteFoundError())
   })
 
@@ -57,13 +63,13 @@ describe('FetchStockComparison UseCase', () => {
     jest.spyOn(fetchManyStockQuotesBySymbolsApiStub, 'fetchManyStockQuotes').mockReturnValueOnce(
       Promise.reject(new Error())
     )
-    const promise = sut.perform(makeFakeStockSymbols())
+    const promise = sut.perform(makeFakeFetchStockComparisonData())
     await expect(promise).rejects.toThrow()
   })
 
   it('Should return StockComparison if FetchManyStockQuotesBySymbolsApi is a success', async () => {
     const { sut } = makeSut()
-    const result = await sut.perform(makeFakeStockSymbols())
+    const result = await sut.perform(makeFakeFetchStockComparisonData())
     expect(result.value).toEqual({
       lastPrices: makeFakeStockQuotes()
     })
