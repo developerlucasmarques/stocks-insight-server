@@ -32,4 +32,11 @@ describe('DateParam Validation', () => {
     expect(result.isLeft()).toBe(true)
     expect(result.value).toEqual(new InvalidDateError('2023-01'))
   })
+
+  it('Should return InvalidDateError for date with invalid format (missing month)', async () => {
+    const sut = makeSut()
+    const result = await sut.validate({ to: '2023--02' })
+    expect(result.isLeft()).toBe(true)
+    expect(result.value).toEqual(new InvalidDateError('2023--02'))
+  })
 })
