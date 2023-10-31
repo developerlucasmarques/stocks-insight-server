@@ -1,6 +1,6 @@
 import { right, type Either, left } from '@/shared/either'
-import type { Validation } from '../../contracts'
-import type { HttpRequest } from '../../http-types/http'
+import type { Validation } from '@/presentation/contracts'
+import type { HttpRequest } from '@/presentation/http-types/http'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
 import { badRequest } from '@/presentation/helpers/http/http-helper'
 
@@ -22,15 +22,26 @@ const makeParamsValidation = (): Validation => {
   return new ParamsValidationStub()
 }
 
+const makeQueryValidation = (): Validation => {
+  class QueryValidationStub implements Validation {
+    async validate (input: any): Promise<Either<Error, null>> {
+      return await Promise.resolve(right(null))
+    }
+  }
+  return new QueryValidationStub()
+}
+
 type SutTypes = {
   sut: FetchStockComparisonController
   paramsValidationStub: Validation
+  queryValidationStub: Validation
 }
 
 const makeSut = (): SutTypes => {
   const paramsValidationStub = makeParamsValidation()
-  const sut = new FetchStockComparisonController(paramsValidationStub)
-  return { sut, paramsValidationStub }
+  const queryValidationStub = makeQueryValidation()
+  const sut = new FetchStockComparisonController(paramsValidationStub, queryValidationStub)
+  return { sut, paramsValidationStub, queryValidationStub }
 }
 
 describe('FetchStockComparison Controller', () => {
@@ -48,5 +59,13 @@ describe('FetchStockComparison Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should call Query Validation with correct values', async () => {
+    const { sut, queryValidationStub } = makeSut()
+    const validateSpy = jest.spyOn(queryValidationStub, 'validate')
+    await sut.handle(makeFakeRequest())
+    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'another_stock' })
+    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'other_stock' })
   })
 })
