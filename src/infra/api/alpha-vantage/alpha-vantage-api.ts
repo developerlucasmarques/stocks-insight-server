@@ -1,6 +1,7 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
+import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote } from './types/global-stock-quote'
 
 export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
@@ -11,8 +12,12 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi {
   async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
     const url = this.makeUrl('GLOBAL_QUOTE', stockSymbol)
     const response = await axios.get(url)
+    console.log(response.data)
     if (!response.data) {
       return null
+    }
+    if (response.data.Information) {
+      throw new MaximumLimitReachedError(response.data)
     }
     const data: GlobalStockQuote = response.data
     return {
