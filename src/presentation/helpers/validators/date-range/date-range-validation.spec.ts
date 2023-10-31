@@ -2,11 +2,11 @@ import { InvalidDateRangeError } from '@/presentation/errors'
 import { DateRangeValidation } from './date-range-validation'
 
 const makeFakeInput = (initialDate: string, finalDate: string): any => (
-  { to: initialDate, from: finalDate }
+  { from: initialDate, to: finalDate }
 )
 
 const makeSut = (): DateRangeValidation => {
-  return new DateRangeValidation('to', 'from')
+  return new DateRangeValidation('from', 'to')
 }
 
 describe('DateRange Validation', () => {

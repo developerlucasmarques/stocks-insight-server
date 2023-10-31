@@ -8,8 +8,8 @@ export const fetchStockHistoryValidationFactory = (): Validation => {
   const validations: Validation[] = []
   validations.push(
     stockSymbolValidationFactory(),
-    dateFormatValidationFactory(['to', 'from']),
-    dateRangeValidationFactory('to', 'from')
+    dateFormatValidationFactory(['from', 'to']),
+    dateRangeValidationFactory('from', 'to')
   )
   return validationCompositeFactory(validations)
 }

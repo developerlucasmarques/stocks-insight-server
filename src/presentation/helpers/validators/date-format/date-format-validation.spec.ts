@@ -2,11 +2,11 @@ import { InvalidDateFormatError } from '@/presentation/errors'
 import { DateFormatValidation } from './date-format-validation'
 
 const makeFakeInput = (initialDate: string, finalDate: string): any => (
-  { to: initialDate, from: finalDate }
+  { from: initialDate, to: finalDate }
 )
 
 const makeSut = (): DateFormatValidation => {
-  return new DateFormatValidation(['to', 'from'])
+  return new DateFormatValidation(['from', 'to'])
 }
 
 describe('DateFormat Validation', () => {

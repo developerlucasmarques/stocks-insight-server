@@ -13,8 +13,8 @@ describe('FetchStockHistoryValidation Factory', () => {
     const validations: Validation[] = []
     validations.push(
       stockSymbolValidationFactory(),
-      dateFormatValidationFactory(['to', 'from']),
-      dateRangeValidationFactory('to', 'from')
+      dateFormatValidationFactory(['from', 'to']),
+      dateRangeValidationFactory('from', 'to')
     )
     expect(ValidationComposite).toHaveBeenCalledWith(validations)
   })
