@@ -148,5 +148,12 @@ describe('AlphaVantageApi', () => {
       const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       expect(result).toEqual(makeFakeStockHistory())
     })
+
+    it('Should return null if stock history not found', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, null)
+      const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
+      expect(result).toBeNull()
+    })
   })
 })
