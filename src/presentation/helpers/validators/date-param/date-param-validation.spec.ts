@@ -53,4 +53,10 @@ describe('DateParam Validation', () => {
     const result = await sut.validate({ to: '2023-04-31' })
     expect(result.value).toEqual(new InvalidDateError('2023-04-31'))
   })
+
+  it('Should return valid result for a valid date', async () => {
+    const sut = makeSut()
+    const result = await sut.validate({ to: '2023-01-02' })
+    expect(result.isRight()).toBe(true)
+  })
 })
