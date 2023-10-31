@@ -1,16 +1,15 @@
+import type { FetchStockHistoryData } from '@/domain/contracts'
+import type { StockHistory } from '@/domain/models/stock-history'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
-import type { GlobalStockQuote, DailyStockQuote } from './types'
-import type { FetchStockHistoryData } from '@/domain/contracts'
-import type { StockHistory } from '@/domain/models/stock-history'
+import type { DailyStockQuote, GlobalStockQuote } from './types'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
-const symbol = 'AAPL'
 
-const makeFakeUrl = (func: string, outputsize?: string): string => {
+const makeFakeUrl = (func: string, symbol: string, outputsize?: string): string => {
   if (outputsize) {
     return `${baseUrl}${func}&symbol=${symbol}&outputsize=${outputsize}&apikey=${apiKey}`
   }
@@ -92,16 +91,18 @@ describe('AlphaVantageApi', () => {
   })
 
   describe('fetchStockQuote()', () => {
+    const stockQuteUrl = makeFakeUrl('GLOBAL_QUOTE', 'AAPL')
+
     it('Should call axios with correct url', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
+      axiosMock.onGet(stockQuteUrl).reply(200, makeFakeGlobalStockQuote())
       await sut.fetchStockQuote('AAPL')
-      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE'))
+      expect(axiosMock.history.get[0].url).toBe(stockQuteUrl)
     })
 
     it('Should return a GlobalStockQuote if fetch stock quote is a success', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
+      axiosMock.onGet(stockQuteUrl).reply(200, makeFakeGlobalStockQuote())
       const result = await sut.fetchStockQuote('AAPL')
       expect(result).toEqual({
         name: 'AAPL',
@@ -112,21 +113,21 @@ describe('AlphaVantageApi', () => {
 
     it('Should return null if stock quote not found', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, null)
+      axiosMock.onGet(stockQuteUrl).reply(200, null)
       const result = await sut.fetchStockQuote('AAPL')
       expect(result).toBeNull()
     })
 
     it('Should throw if axios throws', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(404)
+      axiosMock.onGet(stockQuteUrl).reply(404)
       const promise = sut.fetchStockQuote('AAPL')
       await expect(promise).rejects.toThrow()
     })
 
     it('Should throw if AlphaVantage return Information field', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, { Information: 'any_information' })
+      axiosMock.onGet(stockQuteUrl).reply(200, { Information: 'any_information' })
       const promise = sut.fetchStockQuote('AAPL')
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
@@ -134,30 +135,32 @@ describe('AlphaVantageApi', () => {
   })
 
   describe('fetchStockHistory()', () => {
+    const stockHistoryUrl = makeFakeUrl('TIME_SERIES_DAILY', 'AAPL', 'full')
+
     it('Should call axios with correct url', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, makeFakeDailyStockQuote())
+      axiosMock.onGet(stockHistoryUrl).reply(200, makeFakeDailyStockQuote())
       await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
-      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('TIME_SERIES_DAILY', 'full'))
+      expect(axiosMock.history.get[0].url).toBe(stockHistoryUrl)
     })
 
     it('Should return a StockHistory if fetch stock history is a success', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, makeFakeDailyStockQuote())
+      axiosMock.onGet(stockHistoryUrl).reply(200, makeFakeDailyStockQuote())
       const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       expect(result).toEqual(makeFakeStockHistory())
     })
 
     it('Should return null if stock history not found', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, null)
+      axiosMock.onGet(stockHistoryUrl).reply(200, null)
       const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       expect(result).toBeNull()
     })
 
     it('Should return null if AlphaVantage return "Time Series (Daily)" but empty', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, {
+      axiosMock.onGet(stockHistoryUrl).reply(200, {
         'Time Series (Daily)': {}
       })
       const result = await sut.fetchStockHistory(makeFakeFetchStockHistoryData())
@@ -166,26 +169,17 @@ describe('AlphaVantageApi', () => {
 
     it('Should throw if axios throws', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(404)
+      axiosMock.onGet(stockHistoryUrl).reply(404)
       const promise = sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       await expect(promise).rejects.toThrow()
     })
 
     it('Should throw if AlphaVantage return Information field', async () => {
       const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('TIME_SERIES_DAILY', 'full')).reply(200, { Information: 'any_information' })
+      axiosMock.onGet(stockHistoryUrl).reply(200, { Information: 'any_information' })
       const promise = sut.fetchStockHistory(makeFakeFetchStockHistoryData())
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
-    })
-  })
-
-  describe('fetchManyStockQuotes()', () => {
-    it('Should call axios with correct url', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE')).reply(200, makeFakeGlobalStockQuote())
-      await sut.fetchStockQuote('AAPL')
-      expect(axiosMock.history.get[0].url).toBe(makeFakeUrl('GLOBAL_QUOTE'))
     })
   })
 })
