@@ -121,6 +121,15 @@ describe('FetchStockHistory Controller', () => {
     expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().query)
   })
 
+  it('Should return 400 if Query Validation fails', async () => {
+    const { sut, queryValidationStub } = makeSut()
+    jest.spyOn(queryValidationStub, 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
   it('Should call FetchStockHistory with correct values', async () => {
     const { sut, fetchStockHistoryStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockHistoryStub, 'perform')
