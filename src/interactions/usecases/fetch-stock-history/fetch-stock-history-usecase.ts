@@ -11,9 +11,6 @@ export class FetchStockHistoryUseCase implements FetchStockHistory {
     if (!stockHistory) {
       return left(new StockHistoryNotFoundError(data))
     }
-    return right({
-      name: '',
-      prices: []
-    })
+    return right(stockHistory)
   }
 }
