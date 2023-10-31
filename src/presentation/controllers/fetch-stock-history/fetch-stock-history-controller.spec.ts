@@ -1,4 +1,5 @@
-import { right, type Either } from '@/shared/either'
+import { badRequest } from '@/presentation/helpers/http/http-helper'
+import { left, right, type Either } from '@/shared/either'
 import type { Validation } from '../../contracts'
 import type { HttpRequest } from '../../http-types/http'
 import { FetchStockHistoryController } from './fetch-stock-history-controller'
@@ -41,5 +42,14 @@ describe('FetchStockHistory Controller', () => {
       from: '2023-01-02',
       to: '2023-01-03'
     })
+  })
+
+  it('Should return 400 if Validation fails', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
   })
 })
