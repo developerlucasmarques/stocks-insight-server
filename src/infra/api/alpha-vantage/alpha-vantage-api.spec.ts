@@ -236,5 +236,13 @@ describe('AlphaVantageApi', () => {
       const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       expect(result).toEqual([makeFakeStockQuote()])
     })
+
+    it('Should return empty if no stock quote found', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, null)
+      axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, null)
+      const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
+      expect(result.length).toBe(0)
+    })
   })
 })
