@@ -42,6 +42,12 @@ const makeFakeStockHistory = (): StockHistory => ({
   }]
 })
 
+const makeFakeStockQuote = (): StockQuote => ({
+  name: 'AAPL',
+  lastPrice: 166.89,
+  pricedAt: '2023-01-01'
+})
+
 const makeFakeStockQuotes = (): StockQuote[] => ([{
   name: 'AAPL',
   lastPrice: 166.89,
@@ -130,11 +136,7 @@ describe('AlphaVantageApi', () => {
       const sut = makeSut()
       axiosMock.onGet(stockQuteUrl).reply(200, makeFakeGlobalStockQuote())
       const result = await sut.fetchStockQuote('AAPL')
-      expect(result).toEqual({
-        name: 'AAPL',
-        lastPrice: 166.89,
-        pricedAt: '2023-01-01'
-      })
+      expect(result).toEqual(makeFakeStockQuote())
     })
 
     it('Should return null if stock quote not found', async () => {
@@ -232,11 +234,7 @@ describe('AlphaVantageApi', () => {
       axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'AAPL')).reply(200, makeFakeGlobalStockQuote())
       axiosMock.onGet(makeFakeUrl('GLOBAL_QUOTE', 'TSLA')).reply(200, null)
       const result = await sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
-      expect(result).toEqual([{
-        name: 'AAPL',
-        lastPrice: 166.89,
-        pricedAt: '2023-01-01'
-      }])
+      expect(result).toEqual([makeFakeStockQuote()])
     })
   })
 })
