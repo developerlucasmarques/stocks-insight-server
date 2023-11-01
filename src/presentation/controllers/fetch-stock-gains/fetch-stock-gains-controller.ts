@@ -1,5 +1,6 @@
 import type { FetchStockGains } from '@/domain/contracts'
 import type { Controller, Validation } from '@/presentation/contracts'
+import { InvalidPurchasedAmountError } from '@/presentation/errors'
 import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 
@@ -16,6 +17,9 @@ export class FetchStockGainsController implements Controller {
         return badRequest(validationResult.value)
       }
       const { stockSymbol, purchasedAt, purchasedAmount } = httpRequest.params
+      if (Number(purchasedAmount) === 0) {
+        return badRequest(new InvalidPurchasedAmountError())
+      }
       const fetchStockGainsResult = await this.fetchStockGains.perform({
         stockSymbol, purchasedAt, purchasedAmount: Number(purchasedAmount)
       })
