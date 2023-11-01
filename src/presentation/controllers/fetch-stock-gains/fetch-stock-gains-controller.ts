@@ -17,7 +17,7 @@ export class FetchStockGainsController implements Controller {
         return badRequest(validationResult.value)
       }
       const { stockSymbol, purchasedAt, purchasedAmount } = httpRequest.params
-      if (Number(purchasedAmount) === 0) {
+      if (Number(purchasedAmount) <= 0) {
         return badRequest(new InvalidPurchasedAmountError())
       }
       const fetchStockGainsResult = await this.fetchStockGains.perform({
