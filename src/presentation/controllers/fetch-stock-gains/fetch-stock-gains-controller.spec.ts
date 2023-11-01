@@ -1,3 +1,5 @@
+import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
+import type { StockGains } from '@/domain/models/stock-gains'
 import type { Validation } from '@/presentation/contracts'
 import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
@@ -12,6 +14,21 @@ const makeFakeRequest = (): HttpRequest => ({
   }
 })
 
+const makeFakeFetchStockGainsData = (): FetchStockGainsData => ({
+  stockSymbol: 'any_stock_symbol',
+  purchasedAt: '2023-01-01',
+  purchasedAmount: 10000
+})
+
+const makeFakeStockGains = (): StockGains => ({
+  name: 'any_stock_symbol',
+  lastPrice: 150.99,
+  pricedAtDate: 130.99,
+  purchasedAmount: 9900.30,
+  purchasedAt: '2023-01-02',
+  capitalGains: 1423.95
+})
+
 const makeValidation = (): Validation => {
   class ValidationStub implements Validation {
     async validate (input: any): Promise<Either<Error, null>> {
@@ -21,15 +38,26 @@ const makeValidation = (): Validation => {
   return new ValidationStub()
 }
 
+const makeFetchStockGains = (): FetchStockGains => {
+  class FetchStockGainsStub implements FetchStockGains {
+    async perform (data: FetchStockGainsData): Promise<FetchStockGainsResponse> {
+      return await Promise.resolve(right(makeFakeStockGains()))
+    }
+  }
+  return new FetchStockGainsStub()
+}
+
 type SutTypes = {
   sut: FetchStockGainsController
   validationStub: Validation
+  fetchStockGainsStub: FetchStockGains
 }
 
 const makeSut = (): SutTypes => {
   const validationStub = makeValidation()
-  const sut = new FetchStockGainsController(validationStub)
-  return { sut, validationStub }
+  const fetchStockGainsStub = makeFetchStockGains()
+  const sut = new FetchStockGainsController(validationStub, fetchStockGainsStub)
+  return { sut, validationStub, fetchStockGainsStub }
 }
 
 describe('FetchStockGains Controller', () => {
@@ -56,5 +84,12 @@ describe('FetchStockGains Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should call FetchStockGains with correct values', async () => {
+    const { sut, fetchStockGainsStub } = makeSut()
+    const performSpy = jest.spyOn(fetchStockGainsStub, 'perform')
+    await sut.handle(makeFakeRequest())
+    expect(performSpy).toHaveBeenCalledWith(makeFakeFetchStockGainsData())
   })
 })
