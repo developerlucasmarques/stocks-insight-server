@@ -23,16 +23,16 @@ Esta funcionalidade permite aos usuários calcular a projeção de ganhos ou per
 - `GET /stocks/AAPL/gains?purchasedAt=2021-09-10&purchasedAmount=34000`
 
 ## Caso de sucesso
-- ❌ Busca o símbolo da ação desejada em cache.
-- ❌ Valida se o símbolo da ação existe.
-- ❌ Valida a data da possível compra.
-- ❌ Valida o valor que seria investido.
-- ❌ Calcula os ganhos ou perdas que ocorreriam se tivesse sido feito o investimento.
-- ❌ Busca os dados da ação no período determinado na API (https://www.alphavantage.co).
+- ✅ Busca o símbolo da ação desejada em cache.
+- ✅ Valida se o símbolo da ação existe.
+- ✅ Valida a data da possível compra.
+- ✅ Valida o valor que seria investido.
+- ✅ Calcula os ganhos ou perdas que ocorreriam se tivesse sido feito o investimento.
+- ✅ Busca os dados da ação no período determinado na API (https://www.alphavantage.co).
 
 ### Resposta
-- ❌ Código de status: **200 OK**
-- ❌ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
+- ✅ Código de status: **200 OK**
+- ✅ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
 
 Exemplo:
 
@@ -40,7 +40,7 @@ Exemplo:
 {
   "name": "IBM",
   "lastPrice": 150.50,
-  "pricedAtDate": 140.50,
+  "priceAtDate": 140.50,
   "purchasedAmount": 9975.50,
   "purchasedAt": "2023-01-30",
   "capitalGains": 710
@@ -51,13 +51,13 @@ Exemplo:
 
 ### Respostas
 - Código de status: **400 Bad Request**
-  - ❌ Se o símbolo da ação for inválido.
-  - ❌ Se a data da possível compra for inválida.
-  - ❌ Se o valor que seria investido for inválido.
+  - ✅ Se o símbolo da ação for inválido.
+  - ✅ Se a data da possível compra for inválida.
+  - ✅ Se o valor que seria investido for inválido.
 - Código de status: **404 Not Found**
-  - ❌ Se o símbolo da ação não for encontrado.
-  - ❌ Se não houver dados disponíveis para o período especificado.
+  - ✅ Se o símbolo da ação não for encontrado.
+  - ✅ Se não houver dados disponíveis para o período especificado.
 - Código de status: **500 Internal Server Error**
-  - ❌ Em caso de erro ao fazer busca do símbolo em cache.
-  - ❌ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
-  - ❌ Em caso de erro interno no servidor.
+  - ✅ Em caso de erro ao fazer busca do símbolo em cache.
+  - ✅ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
+  - ✅ Em caso de erro interno no servidor.
