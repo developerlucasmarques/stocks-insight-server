@@ -1,10 +1,11 @@
 import type { FetchStockGainsData } from '@/domain/contracts'
-import { CalculateStockGains } from '@/domain/core/calculate-stock-gains'
-import { StockQuoteAtDateNotFoundError } from '@/domain/errors'
-import type { StockGains } from '@/domain/models/stock-gains'
-import type { StockQuoteAtDateAndLastDate } from '@/domain/models/stock-quote-at-date-and-last-date'
-import type { FetchStockQuoteAtDateAndLastDateApi, FetchStockQuoteAtDateAndLastDateApiData } from '@/interactions/contracts/api'
+import { StockQuoteAtDateNotFoundError, StockQuoteNotFoundError } from '@/domain/errors'
+import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
+import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockGainsUseCase } from './fetch-stock-gains-usecase'
+import type { StockQuote } from '@/domain/models/stock-quote'
+import { CalculateStockGains } from '@/domain/core/calculate-stock-gains'
+import { type StockGains } from '@/domain/models/stock-gains'
 
 const makeFetchStockGainsData = (): FetchStockGainsData => ({
   stockSymbol: 'any_stock_symbol',
@@ -12,17 +13,16 @@ const makeFetchStockGainsData = (): FetchStockGainsData => ({
   purchasedAmount: 9900.30
 })
 
-const makeFakeStockQuoteAtDateAndLastDate = (): StockQuoteAtDateAndLastDate => ({
-  quoteAtDate: {
-    name: 'any_stock_symbol',
-    pricedAtDate: 130.99,
-    quoteDate: '2023-01-02'
-  },
-  quoteLastDate: {
-    name: 'any_stock_symbol',
-    lastPrice: 150.99,
-    pricedAt: '2023-01-10'
-  }
+const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
+  name: 'any_stock_symbol',
+  pricedAtDate: 130.99,
+  quoteDate: '2023-01-02'
+})
+
+const makeFakeStockQuote = (): StockQuote => ({
+  name: 'any_stock_symbol',
+  lastPrice: 150.99,
+  pricedAt: '2023-01-10'
 })
 
 const makeFakeStockGains = (): StockGains => ({
@@ -34,42 +34,53 @@ const makeFakeStockGains = (): StockGains => ({
   capitalGains: 1423.95
 })
 
-const makeFetchStockQuoteAtDateAndLastDateApi = (): FetchStockQuoteAtDateAndLastDateApi => {
-  class FetchStockQuoteAtDateApiStub implements FetchStockQuoteAtDateAndLastDateApi {
-    async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateAndLastDateApiData): Promise<null | StockQuoteAtDateAndLastDate> {
-      return await Promise.resolve(makeFakeStockQuoteAtDateAndLastDate())
+const makeFetchStockQuoteAtDateApiApi = (): FetchStockQuoteAtDateApi => {
+  class FetchStockQuoteAtDateApiStub implements FetchStockQuoteAtDateApi {
+    async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<null | StockQuoteAtDate> {
+      return await Promise.resolve(makeFakeStockQuoteAtDate())
     }
   }
   return new FetchStockQuoteAtDateApiStub()
 }
 
+const makeFetchStockQuoteBySymbolApi = (): FetchStockQuoteBySymbolApi => {
+  class FetchStockQuoteBySymbolApiStub implements FetchStockQuoteBySymbolApi {
+    async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote> {
+      return await Promise.resolve(makeFakeStockQuote())
+    }
+  }
+  return new FetchStockQuoteBySymbolApiStub()
+}
+
 type SutTypes = {
   sut: FetchStockGainsUseCase
-  fetchStockQuoteAtDateAndLastDateApiStub: FetchStockQuoteAtDateAndLastDateApi
+  fetchStockQuoteAtDateApiStub: FetchStockQuoteAtDateApi
+  fetchStockQuoteBySymbolApiStub: FetchStockQuoteBySymbolApi
 }
 
 const makeSut = (): SutTypes => {
-  const fetchStockQuoteAtDateAndLastDateApiStub = makeFetchStockQuoteAtDateAndLastDateApi()
+  const fetchStockQuoteAtDateApiStub = makeFetchStockQuoteAtDateApiApi()
+  const fetchStockQuoteBySymbolApiStub = makeFetchStockQuoteBySymbolApi()
   const sut = new FetchStockGainsUseCase(
-    fetchStockQuoteAtDateAndLastDateApiStub
+    fetchStockQuoteAtDateApiStub, fetchStockQuoteBySymbolApiStub
   )
-  return { sut, fetchStockQuoteAtDateAndLastDateApiStub }
+  return { sut, fetchStockQuoteAtDateApiStub, fetchStockQuoteBySymbolApiStub }
 }
 
 describe('FetchStockGains UseCase', () => {
   it('Should call FetchStockQuoteAtDateApi with correct values', async () => {
-    const { sut, fetchStockQuoteAtDateAndLastDateApiStub } = makeSut()
-    const fetchStockQuoteAtDateSpy = jest.spyOn(fetchStockQuoteAtDateAndLastDateApiStub, 'fetchStockQuoteAtDate')
+    const { sut, fetchStockQuoteAtDateApiStub } = makeSut()
+    const fetchStockQuoteAtDateSpy = jest.spyOn(fetchStockQuoteAtDateApiStub, 'fetchStockQuoteAtDate')
     await sut.perform(makeFetchStockGainsData())
     expect(fetchStockQuoteAtDateSpy).toHaveBeenCalledWith({
       stockSymbol: 'any_stock_symbol',
-      quoteAtDate: '2023-01-02'
+      quoteDate: '2023-01-02'
     })
   })
 
   it('Should return StockQuoteAtDateNotFoundError if FetchStockQuoteAtDateApi returns null', async () => {
-    const { sut, fetchStockQuoteAtDateAndLastDateApiStub } = makeSut()
-    jest.spyOn(fetchStockQuoteAtDateAndLastDateApiStub, 'fetchStockQuoteAtDate').mockReturnValueOnce(
+    const { sut, fetchStockQuoteAtDateApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteAtDateApiStub, 'fetchStockQuoteAtDate').mockReturnValueOnce(
       Promise.resolve(null)
     )
     const result = await sut.perform(makeFetchStockGainsData())
@@ -77,8 +88,33 @@ describe('FetchStockGains UseCase', () => {
   })
 
   it('Should throw if FetchStockQuoteAtDateApi throws', async () => {
-    const { sut, fetchStockQuoteAtDateAndLastDateApiStub } = makeSut()
-    jest.spyOn(fetchStockQuoteAtDateAndLastDateApiStub, 'fetchStockQuoteAtDate').mockReturnValueOnce(
+    const { sut, fetchStockQuoteAtDateApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteAtDateApiStub, 'fetchStockQuoteAtDate').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFetchStockGainsData())
+    await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call FetchStockQuoteBySymbolApi with correct stock symbol', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    const fetchStockQuoteSpy = jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote')
+    await sut.perform(makeFetchStockGainsData())
+    expect(fetchStockQuoteSpy).toHaveBeenCalledWith('any_stock_symbol')
+  })
+
+  it('Should return StockQuoteNotFoundError if FetchStockQuoteBySymbolApi returns null', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const result = await sut.perform(makeFetchStockGainsData())
+    expect(result.value).toEqual(new StockQuoteNotFoundError('any_stock_symbol'))
+  })
+
+  it('Should throw if FetchStockQuoteBySymbolApi throws', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const promise = sut.perform(makeFetchStockGainsData())

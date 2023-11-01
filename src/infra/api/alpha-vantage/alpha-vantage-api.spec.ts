@@ -6,7 +6,6 @@ import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { DailyStockQuote, GlobalStockQuote } from './types'
 import { type StockQuote } from '@/domain/models/stock-quote'
-import { type FetchStockQuoteAtDateAndLastDateApiData } from '@/interactions/contracts/api'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -58,11 +57,6 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
   lastPrice: 167.09,
   pricedAt: '2023-01-01'
 }])
-
-const makeFetchStockQuoteAtDateData = (): FetchStockQuoteAtDateAndLastDateApiData => ({
-  stockSymbol: 'AAPL',
-  quoteAtDate: '2023-01-02'
-})
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -275,48 +269,6 @@ describe('AlphaVantageApi', () => {
       axiosMock.onGet(manyStockQuotesUrl('AAPL')).reply(200, { Information: 'any_information' })
       axiosMock.onGet(manyStockQuotesUrl('TSLA')).reply(200, null)
       const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
-      await expect(promise).rejects.toThrow()
-      await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
-    })
-  })
-
-  describe('fetchStockQuoteAtDate()', () => {
-    const stockQuoteAtDateUrl = makeFakeUrl('TIME_SERIES_DAILY', 'AAPL', 'full')
-
-    it('Should call axios with correct url', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, makeFakeDailyStockQuote())
-      await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
-      expect(axiosMock.history.get[0].url).toBe(stockQuoteAtDateUrl)
-    })
-
-    it('Should return null if stock quote at date not found', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, null)
-      const result = await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
-      expect(result).toBeNull()
-    })
-
-    it('Should return null if AlphaVantage return "Time Series (Daily)" but empty', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, {
-        'Time Series (Daily)': {}
-      })
-      const result = await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
-      expect(result).toBeNull()
-    })
-
-    it('Should throw if axios throws', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(stockQuoteAtDateUrl).reply(404)
-      const promise = sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
-      await expect(promise).rejects.toThrow()
-    })
-
-    it('Should throw if AlphaVantage return Information field', async () => {
-      const sut = makeSut()
-      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, { Information: 'any_information' })
-      const promise = sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
     })
