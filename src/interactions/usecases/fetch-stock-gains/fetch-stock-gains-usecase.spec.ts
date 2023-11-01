@@ -1,8 +1,9 @@
 import type { FetchStockGainsData } from '@/domain/contracts'
 import { StockQuoteAtDateNotFoundError } from '@/domain/errors'
 import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
-import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
+import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockGainsUseCase } from './fetch-stock-gains-usecase'
+import type { StockQuote } from '@/domain/models/stock-quote'
 
 const makeFetchStockGainsData = (): FetchStockGainsData => ({
   stockSymbol: 'any_stock_symbol',
@@ -16,6 +17,12 @@ const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
   quoteDate: '2023-01-02'
 })
 
+const makeFakeStockQuote = (): StockQuote => ({
+  name: 'any_stock_name',
+  lastPrice: 120.99,
+  pricedAt: 'any_priced_at'
+})
+
 const makeFetchStockQuoteAtDateApiApi = (): FetchStockQuoteAtDateApi => {
   class FetchStockQuoteAtDateApiStub implements FetchStockQuoteAtDateApi {
     async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<null | StockQuoteAtDate> {
@@ -25,15 +32,28 @@ const makeFetchStockQuoteAtDateApiApi = (): FetchStockQuoteAtDateApi => {
   return new FetchStockQuoteAtDateApiStub()
 }
 
+const makeFetchStockQuoteBySymbolApi = (): FetchStockQuoteBySymbolApi => {
+  class FetchStockQuoteBySymbolApiStub implements FetchStockQuoteBySymbolApi {
+    async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote> {
+      return await Promise.resolve(makeFakeStockQuote())
+    }
+  }
+  return new FetchStockQuoteBySymbolApiStub()
+}
+
 type SutTypes = {
   sut: FetchStockGainsUseCase
   fetchStockQuoteAtDateApiStub: FetchStockQuoteAtDateApi
+  fetchStockQuoteBySymbolApiStub: FetchStockQuoteBySymbolApi
 }
 
 const makeSut = (): SutTypes => {
   const fetchStockQuoteAtDateApiStub = makeFetchStockQuoteAtDateApiApi()
-  const sut = new FetchStockGainsUseCase(fetchStockQuoteAtDateApiStub)
-  return { sut, fetchStockQuoteAtDateApiStub }
+  const fetchStockQuoteBySymbolApiStub = makeFetchStockQuoteBySymbolApi()
+  const sut = new FetchStockGainsUseCase(
+    fetchStockQuoteAtDateApiStub, fetchStockQuoteBySymbolApiStub
+  )
+  return { sut, fetchStockQuoteAtDateApiStub, fetchStockQuoteBySymbolApiStub }
 }
 
 describe('FetchStockGains UseCase', () => {
@@ -63,5 +83,12 @@ describe('FetchStockGains UseCase', () => {
     )
     const promise = sut.perform(makeFetchStockGainsData())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call FetchStockQuoteBySymbolApi with correct stock symbol', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    const fetchStockQuoteSpy = jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote')
+    await sut.perform(makeFetchStockGainsData())
+    expect(fetchStockQuoteSpy).toHaveBeenCalledWith('any_stock_symbol')
   })
 })
