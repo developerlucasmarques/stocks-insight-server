@@ -1,9 +1,9 @@
-import type { StockQuote } from '@/domain/models/stock-quote'
-import type { GlobalStockQuote, DailyStockQuote } from '../types'
-import type { StockHistory } from '@/domain/models/stock-history'
 import type { FetchStockHistoryData } from '@/domain/contracts'
-import { type StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
-import { type FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
+import type { StockHistory } from '@/domain/models/stock-history'
+import type { StockQuote } from '@/domain/models/stock-quote'
+import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
+import type { FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
+import type { DailyStockQuote, GlobalStockQuote } from '../types'
 
 export class AlphaVantageApiHelper {
   private static parseNumFixed (value: string): number {
@@ -41,11 +41,12 @@ export class AlphaVantageApiHelper {
   }
 
   static formatStockQuoteAtDate (dailyStock: DailyStockQuote, data: FetchStockQuoteAtDateApiData): StockQuoteAtDate {
-    const stockQuoteAtDate = dailyStock['Time Series (Daily)'][data.quoteDate]
+    const stockQuoteAtDate = dailyStock['Time Series (Daily)']
+    console.log('LOGGGGGGGG', stockQuoteAtDate[data.quoteDate])
     const stockQuoteAtDateFormated: StockQuoteAtDate = {
       name: data.stockSymbol,
       quoteDate: data.quoteDate,
-      pricedAtDate: this.parseNumFixed(stockQuoteAtDate['4. close'])
+      pricedAtDate: this.parseNumFixed(stockQuoteAtDate[data.quoteDate]['4. close'])
     }
     return stockQuoteAtDateFormated
   }
