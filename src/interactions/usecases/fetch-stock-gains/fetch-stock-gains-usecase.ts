@@ -1,5 +1,5 @@
 import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
-import { StockQuoteAtDateNotFoundError } from '@/domain/errors'
+import { StockQuoteAtDateNotFoundError, StockQuoteNotFoundError } from '@/domain/errors'
 import type { FetchStockQuoteAtDateApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { left, right } from '@/shared/either'
 
@@ -17,7 +17,10 @@ export class FetchStockGainsUseCase implements FetchStockGains {
     if (!stockQuoteAtDate) {
       return left(new StockQuoteAtDateNotFoundError(stockSymbol, purchasedAt))
     }
-    await this.fetchStockQuoteBySymbolApi.fetchStockQuote(stockSymbol)
+    const stockQuote = await this.fetchStockQuoteBySymbolApi.fetchStockQuote(stockSymbol)
+    if (!stockQuote) {
+      return left(new StockQuoteNotFoundError(stockSymbol))
+    }
     return right({
       name: 'IBM',
       lastPrice: 150.50,
