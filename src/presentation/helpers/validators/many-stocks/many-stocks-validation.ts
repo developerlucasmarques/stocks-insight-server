@@ -3,7 +3,7 @@ import type { Validation } from '@/presentation/contracts'
 import { InvalidStockSymbolError } from '@/presentation/errors'
 import { right, type Either, left } from '@/shared/either'
 
-export class StockToCompareValidation implements Validation {
+export class ManyStocksValidation implements Validation {
   constructor (private readonly fetchStockSymbolCache: FetchStockSymbolCache) {}
 
   async validate (input: any): Promise<Either<Error, null>> {

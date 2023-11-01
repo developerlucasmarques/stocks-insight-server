@@ -1,5 +1,5 @@
 import type { FetchStockSymbolCache, StockSymbol } from '@/interactions/contracts/cache'
-import { StockToCompareValidation } from './stock-to-compare-validation'
+import { ManyStocksValidation } from './many-stocks-validation'
 import { InvalidStockSymbolError } from '@/presentation/errors'
 
 const makeInput = (): any => ({
@@ -16,17 +16,17 @@ const makeFetchStockSymbolCache = (): FetchStockSymbolCache => {
 }
 
 type SutTypes = {
-  sut: StockToCompareValidation
+  sut: ManyStocksValidation
   fetchStockSymbolCacheStub: FetchStockSymbolCache
 }
 
 const makeSut = (): SutTypes => {
   const fetchStockSymbolCacheStub = makeFetchStockSymbolCache()
-  const sut = new StockToCompareValidation(fetchStockSymbolCacheStub)
+  const sut = new ManyStocksValidation(fetchStockSymbolCacheStub)
   return { sut, fetchStockSymbolCacheStub }
 }
 
-describe('StockToCompare Validation', () => {
+describe('ManyStocks Validation', () => {
   it('Should call FetchStockSymbolCache with correct values', async () => {
     const { sut, fetchStockSymbolCacheStub } = makeSut()
     const fetchSpy = jest.spyOn(fetchStockSymbolCacheStub, 'fetchOneSymbol')
