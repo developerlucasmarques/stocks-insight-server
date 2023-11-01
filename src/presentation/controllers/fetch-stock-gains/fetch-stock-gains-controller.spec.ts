@@ -5,6 +5,7 @@ import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/ht
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockGainsController } from './fetch-stock-gains-controller'
+import { InvalidPurchasedAmountError } from '@/presentation/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
@@ -75,6 +76,18 @@ describe('FetchStockGains Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
+  })
+
+  it('Should return 400 with InvalidPurchasedAmountError if purchased amount is equal 0', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: {
+        stockSymbol: 'any_stock_symbol',
+        purchasedAt: '2023-01-01',
+        purchasedAmount: '0'
+      }
+    })
+    expect(httpResponse).toEqual(badRequest(new InvalidPurchasedAmountError()))
   })
 
   it('Should return 500 if Validation throws', async () => {
