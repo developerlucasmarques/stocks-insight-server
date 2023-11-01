@@ -61,9 +61,12 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
     return stockQuoteResults
   }
 
-  async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<StockQuoteAtDate | null> {
+  async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<null | StockQuoteAtDate> {
     const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
-    await axios.get(url)
+    const response = await axios.get(url)
+    if (!response.data) {
+      return null
+    }
     return await Promise.resolve({
       name: '', quoteDate: '', pricedAtDate: 0
     })
