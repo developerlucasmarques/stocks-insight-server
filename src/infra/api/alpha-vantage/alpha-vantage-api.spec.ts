@@ -289,5 +289,12 @@ describe('AlphaVantageApi', () => {
       await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
       expect(axiosMock.history.get[0].url).toBe(stockQuoteAtDateUrl)
     })
+
+    it('Should return null if stock quote at date not found', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, null)
+      const result = await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
+      expect(result).toBeNull()
+    })
   })
 })
