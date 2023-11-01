@@ -44,7 +44,7 @@ describe('Stock Routes', () => {
   it('Should return 200 if StockComparison on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA', 'AMZN']))
     await request(app)
-      .get('/stocks/AAPL/compare?stocksToCompare=TSLA,AMZN')
+      .get('/stocks/AAPL/compare?stocksToCompare[]=TSLA&stocksToCompare[]=AMZN')
       .expect(200)
   })
 })
