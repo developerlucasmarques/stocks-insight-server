@@ -1,8 +1,10 @@
 {
   "name": "stocks-insight-server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "Api Rest utilizando TDD, DDD, Clean Architecture e TypeScript",
+  "main": "server.ts",
+  "author": "Lucas Marques",
+  "license": "ISC",
   "directories": {
     "doc": "docs"
   },
@@ -15,9 +17,6 @@
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:ci": "npm test -- --coverage"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "devDependencies": {
     "@shelf/jest-mongodb": "^4.1.7",
     "@types/express": "^4.17.20",
