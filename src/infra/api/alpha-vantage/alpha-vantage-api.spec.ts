@@ -312,5 +312,13 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
       await expect(promise).rejects.toThrow()
     })
+
+    it('Should throw if AlphaVantage return Information field', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, { Information: 'any_information' })
+      const promise = sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
+      await expect(promise).rejects.toThrow()
+      await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
   })
 })
