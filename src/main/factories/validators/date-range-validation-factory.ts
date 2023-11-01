@@ -1,5 +1,5 @@
 import type { Validation } from '@/presentation/contracts'
-import { DateRangeValidation } from '@/presentation/helpers/validators/date-range/date-range-validation'
+import { DateRangeValidation } from '@/presentation/helpers/validators'
 
 export const dateRangeValidationFactory = (
   initialDateFieldName: string, finalDateFieldName: string
