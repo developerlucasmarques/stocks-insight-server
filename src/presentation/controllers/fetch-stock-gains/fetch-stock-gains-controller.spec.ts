@@ -1,7 +1,7 @@
 import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
 import type { StockGains } from '@/domain/models/stock-gains'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockGainsController } from './fetch-stock-gains-controller'
@@ -91,5 +91,14 @@ describe('FetchStockGains Controller', () => {
     const performSpy = jest.spyOn(fetchStockGainsStub, 'perform')
     await sut.handle(makeFakeRequest())
     expect(performSpy).toHaveBeenCalledWith(makeFakeFetchStockGainsData())
+  })
+
+  it('Should return 404 if FetchStockGains returns an Error', async () => {
+    const { sut, fetchStockGainsStub } = makeSut()
+    jest.spyOn(fetchStockGainsStub, 'perform').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(notFound(new Error('any_message')))
   })
 })
