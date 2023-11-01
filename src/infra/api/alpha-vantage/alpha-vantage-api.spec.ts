@@ -1,11 +1,12 @@
 import type { FetchStockHistoryData } from '@/domain/contracts'
 import type { StockHistory } from '@/domain/models/stock-history'
+import type { StockQuote } from '@/domain/models/stock-quote'
+import type { FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { DailyStockQuote, GlobalStockQuote } from './types'
-import { type StockQuote } from '@/domain/models/stock-quote'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -21,6 +22,11 @@ const makeFakeFetchStockHistoryData = (): FetchStockHistoryData => ({
   stockSymbol: 'AAPL',
   initialDate: '2023-01-02',
   finalDate: '2023-01-03'
+})
+
+const makeFakeFetchStockQuoteAtDateApiData = (): FetchStockQuoteAtDateApiData => ({
+  stockSymbol: 'AAPL',
+  quoteDate: '2023-01-02'
 })
 
 const makeFakeStockHistory = (): StockHistory => ({
@@ -57,6 +63,12 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
   lastPrice: 167.09,
   pricedAt: '2023-01-01'
 }])
+
+// const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
+//   name: 'AAPL',
+//   pricedAtDate: 130.99,
+//   quoteDate: '2023-01-02'
+// })
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -271,6 +283,17 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
+  })
+
+  describe('fetchStockQuoteAtDate()', () => {
+    const stockQuoteAtDateUrl = makeFakeUrl('TIME_SERIES_DAILY', 'AAPL', 'full')
+
+    it('Should call axios with correct url', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, makeFakeDailyStockQuote())
+      await sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
+      expect(axiosMock.history.get[0].url).toBe(stockQuoteAtDateUrl)
     })
   })
 })
