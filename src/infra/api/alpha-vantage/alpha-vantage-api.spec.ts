@@ -67,7 +67,7 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
 
 const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
   name: 'AAPL',
-  pricedAtDate: 140.50,
+  priceAtDate: 140.50,
   quoteDate: '2023-01-02'
 })
 

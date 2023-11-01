@@ -3,7 +3,7 @@ import type { CalculateStockGainsData } from './calculate-stock-gains-types'
 
 const makeFakeStockQuote = (): CalculateStockGainsData => ({
   lastPrice: 150.99,
-  pricedAtDate: 140.00,
+  priceAtDate: 140.00,
   purchasedAmount: 2000
 })
 
@@ -16,7 +16,7 @@ describe('CalculateStockGains', () => {
   it('Should return an negative capital gains', async () => {
     const sut = CalculateStockGains.execute({
       lastPrice: 150.99,
-      pricedAtDate: 160.00,
+      priceAtDate: 160.00,
       purchasedAmount: 2000
     })
     expect(sut.capitalGains).toBe(-188.12)

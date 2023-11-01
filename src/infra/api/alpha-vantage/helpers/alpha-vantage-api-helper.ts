@@ -46,7 +46,7 @@ export class AlphaVantageApiHelper {
     const stockQuoteAtDateFormated: StockQuoteAtDate = {
       name: data.stockSymbol,
       quoteDate: data.quoteDate,
-      pricedAtDate: this.parseNumFixed(stockQuoteAtDate[data.quoteDate]['4. close'])
+      priceAtDate: this.parseNumFixed(stockQuoteAtDate[data.quoteDate]['4. close'])
     }
     return stockQuoteAtDateFormated
   }

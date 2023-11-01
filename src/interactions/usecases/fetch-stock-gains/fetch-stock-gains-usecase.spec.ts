@@ -15,7 +15,7 @@ const makeFetchStockGainsData = (): FetchStockGainsData => ({
 
 const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
   name: 'any_stock_symbol',
-  pricedAtDate: 130.99,
+  priceAtDate: 130.99,
   quoteDate: '2023-01-02'
 })
 
@@ -28,7 +28,7 @@ const makeFakeStockQuote = (): StockQuote => ({
 const makeFakeStockGains = (): StockGains => ({
   name: 'any_stock_symbol',
   lastPrice: 150.99,
-  pricedAtDate: 130.99,
+  priceAtDate: 130.99,
   purchasedAmount: 9900.30,
   purchasedAt: '2023-01-02',
   capitalGains: 1423.95
@@ -127,7 +127,7 @@ describe('FetchStockGains UseCase', () => {
     await sut.perform(makeFetchStockGainsData())
     expect(executeSpy).toHaveBeenCalledWith({
       lastPrice: 150.99,
-      pricedAtDate: 130.99,
+      priceAtDate: 130.99,
       purchasedAmount: 9900.30
     })
   })

@@ -1,5 +1,5 @@
 export type StockQuoteAtDate = {
   name: string
-  pricedAtDate: number
+  priceAtDate: number
   quoteDate: string
 }

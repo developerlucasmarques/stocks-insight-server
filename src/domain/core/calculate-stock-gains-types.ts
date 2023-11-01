@@ -1,6 +1,6 @@
 export type CalculateStockGainsData = {
   lastPrice: number
-  pricedAtDate: number
+  priceAtDate: number
   purchasedAmount: number
 }
 
