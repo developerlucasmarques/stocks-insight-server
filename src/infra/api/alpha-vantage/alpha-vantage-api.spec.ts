@@ -313,6 +313,23 @@ describe('AlphaVantageApi', () => {
       expect(result).toBeNull()
     })
 
+    it('Should return null if AlphaVantage "Time Series (Daily)" not found stock quote at date', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, {
+        'Time Series (Daily)': {
+          '2023-01-03': {
+            '1. open': '140.5000',
+            '2. high': '143.1000',
+            '3. low': '136.2910',
+            '4. close': '141.5600',
+            '5. volume': '12500'
+          }
+        }
+      })
+      const result = await sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
+      expect(result).toBeNull()
+    })
+
     it('Should throw if axios throws', async () => {
       const sut = makeSut()
       axiosMock.onGet(stockQuoteAtDateUrl).reply(404)
