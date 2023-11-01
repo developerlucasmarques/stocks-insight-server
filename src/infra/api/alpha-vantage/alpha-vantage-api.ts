@@ -74,8 +74,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
     if (keys.length === 0) {
       return null
     }
-    return await Promise.resolve({
-      name: '', quoteDate: '', pricedAtDate: 0
-    })
+    const dailyStock: DailyStockQuote = response.data
+    return AlphaVantageApiHelper.formatStockQuoteAtDate(dailyStock, data)
   }
 }
