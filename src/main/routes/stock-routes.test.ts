@@ -7,7 +7,7 @@ import { RedisHelper } from '@/infra/cache/redis/helpers/redis-helper'
 let redisServer: RedisMemoryServer
 let redis: Redis
 
-jest.setTimeout(10000)
+jest.setTimeout(15000)
 
 describe('Stock Routes', () => {
   beforeAll(async () => {
@@ -45,6 +45,13 @@ describe('Stock Routes', () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA', 'AMZN']))
     await request(app)
       .get('/stocks/AAPL/compare?stocksToCompare[]=TSLA&stocksToCompare[]=AMZN')
+      .expect(200)
+  })
+
+  it('Should return 200 if StockGains on success', async () => {
+    await redis.set('stockSymbols', JSON.stringify(['AAPL']))
+    await request(app)
+      .get('/stocks/AAPL/gains?purchasedAt=2023-01-03&purchasedAmount=10000')
       .expect(200)
   })
 })
