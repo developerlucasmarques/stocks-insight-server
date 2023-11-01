@@ -1,13 +1,14 @@
 import type { FetchStockHistoryData } from '@/domain/contracts'
 import type { StockHistory } from '@/domain/models/stock-history'
 import type { StockQuote } from '@/domain/models/stock-quote'
-import type { FetchManyStockQuotesBySymbolsApi, FetchStockHistoryApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
+import type { FetchManyStockQuotesBySymbolsApi, FetchStockHistoryApi, FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote, DailyStockQuote } from './types'
 import { AlphaVantageApiHelper } from './helpers/alpha-vantage-api-helper'
+import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 
-export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi, FetchManyStockQuotesBySymbolsApi {
+export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi, FetchManyStockQuotesBySymbolsApi, FetchStockQuoteAtDateApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
 
   constructor (private readonly apiKey: string) {}
@@ -58,5 +59,13 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
       }
     }
     return stockQuoteResults
+  }
+
+  async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<StockQuoteAtDate | null> {
+    const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
+    await axios.get(url)
+    return await Promise.resolve({
+      name: '', quoteDate: '', pricedAtDate: 0
+    })
   }
 }
