@@ -1,5 +1,5 @@
 import type { Either } from '@/shared/either'
-import type { StockHistoryNotFoundError, StockQuoteNotFoundError } from '../errors'
+import type { StockQuoteAtDateNotFoundError, StockQuoteNotFoundError } from '../errors'
 import type { StockGains } from '../models/stock-gains'
 
 export type FetchStockGainsData = {
@@ -8,7 +8,9 @@ export type FetchStockGainsData = {
   purchasedAmount: number
 }
 
-export type FetchStockGainsResponse = Either<StockHistoryNotFoundError | StockQuoteNotFoundError, StockGains>
+export type FetchStockGainsResponse = Either<
+StockQuoteAtDateNotFoundError | StockQuoteNotFoundError, StockGains
+>
 
 export interface FetchStockGains {
   perform: (data: FetchStockGainsData) => Promise<FetchStockGainsResponse>

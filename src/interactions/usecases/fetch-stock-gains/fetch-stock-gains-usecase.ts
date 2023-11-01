@@ -1,15 +1,19 @@
 import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
+import { StockQuoteAtDateNotFoundError } from '@/domain/errors'
 import type { FetchStockQuoteAtDateApi } from '@/interactions/contracts/api'
-import { right } from '@/shared/either'
+import { left, right } from '@/shared/either'
 
 export class FetchStockGainsUseCase implements FetchStockGains {
   constructor (private readonly fetchStockQuoteAtDateApi: FetchStockQuoteAtDateApi) {}
 
   async perform (data: FetchStockGainsData): Promise<FetchStockGainsResponse> {
     const { stockSymbol, purchasedAt } = data
-    await this.fetchStockQuoteAtDateApi.fetchStockQuoteAtDate({
+    const stockQuoteAtDate = await this.fetchStockQuoteAtDateApi.fetchStockQuoteAtDate({
       stockSymbol, quoteDate: purchasedAt
     })
+    if (!stockQuoteAtDate) {
+      return left(new StockQuoteAtDateNotFoundError(stockSymbol, purchasedAt))
+    }
     return right({
       name: 'IBM',
       lastPrice: 150.50,
