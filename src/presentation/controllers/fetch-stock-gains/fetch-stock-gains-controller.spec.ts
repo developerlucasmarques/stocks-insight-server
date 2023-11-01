@@ -90,6 +90,18 @@ describe('FetchStockGains Controller', () => {
     expect(httpResponse).toEqual(badRequest(new InvalidPurchasedAmountError()))
   })
 
+  it('Should return 400 with InvalidPurchasedAmountError if purchased amount is less than 0', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle({
+      params: {
+        stockSymbol: 'any_stock_symbol',
+        purchasedAt: '2023-01-01',
+        purchasedAmount: '-1'
+      }
+    })
+    expect(httpResponse).toEqual(badRequest(new InvalidPurchasedAmountError()))
+  })
+
   it('Should return 500 if Validation throws', async () => {
     const { sut, validationStub } = makeSut()
     jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
