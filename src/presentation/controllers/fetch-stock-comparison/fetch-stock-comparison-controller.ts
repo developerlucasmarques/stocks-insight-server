@@ -6,7 +6,7 @@ import type { Either } from '@/shared/either'
 
 export class FetchStockComparisonController implements Controller {
   constructor (
-    private readonly paransValidation: Validation,
+    private readonly paramsValidation: Validation,
     private readonly queryValidation: Validation,
     private readonly fetchStockComparison: FetchStockComparison
   ) {}
@@ -14,7 +14,7 @@ export class FetchStockComparisonController implements Controller {
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const validationsResult: Array<Either<Error, null>> = [
-        await this.paransValidation.validate(httpRequest.params),
+        await this.paramsValidation.validate(httpRequest.params),
         await this.queryValidation.validate(httpRequest.query)
       ]
       for (const validation of validationsResult) {
