@@ -1,6 +1,7 @@
-import { right, type Either } from '@/shared/either'
-import type { Validation } from '../../contracts'
-import type { HttpRequest } from '../../http-types/http'
+import type { Validation } from '@/presentation/contracts'
+import { badRequest } from '@/presentation/helpers/http/http-helper'
+import type { HttpRequest } from '@/presentation/http-types/http'
+import { left, right, type Either } from '@/shared/either'
 import { FetchStockGainsController } from './fetch-stock-gains-controller'
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -37,5 +38,14 @@ describe('FetchStockGains Controller', () => {
     const validateSpy = jest.spyOn(validationStub, 'validate')
     await sut.handle(makeFakeRequest())
     expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().params)
+  })
+
+  it('Should return 400 if Validation fails', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
+      Promise.resolve(left(new Error('any_message')))
+    )
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
   })
 })
