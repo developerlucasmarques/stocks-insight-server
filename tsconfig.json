@@ -1,16 +1,17 @@
 {
   "compilerOptions": {
-    "outDir": "./dist",
+    "outDir": "dist",
     "module": "CommonJS",
     "target": "ES2021",
     "esModuleInterop": true,
-    "allowJs": true,
-    "strictNullChecks": true,
-    "sourceMap": true,
+    "strict": true,
     "rootDir": "src",
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"]
     }
-  }
+  },
+  "include": [
+    "src"
+  ]
 }
