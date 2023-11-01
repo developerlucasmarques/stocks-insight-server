@@ -11,6 +11,6 @@ export default (router: Router): void => {
     '/stocks/:stockSymbol/history', adaptRoute(fetchStockStoryControllerFactory())
   )
   router.get(
-    '/stocks/:stockSymbol/comparison', adaptRoute(fetchStockComparisonControllerFactory())
+    '/stocks/:stockSymbol/compare', adaptRoute(fetchStockComparisonControllerFactory())
   )
 }
