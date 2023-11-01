@@ -1,5 +1,5 @@
 import type { FetchStockGainsData } from '@/domain/contracts'
-import { StockQuoteAtDateNotFoundError } from '@/domain/errors'
+import { StockQuoteAtDateNotFoundError, StockQuoteNotFoundError } from '@/domain/errors'
 import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockGainsUseCase } from './fetch-stock-gains-usecase'
@@ -90,5 +90,14 @@ describe('FetchStockGains UseCase', () => {
     const fetchStockQuoteSpy = jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote')
     await sut.perform(makeFetchStockGainsData())
     expect(fetchStockQuoteSpy).toHaveBeenCalledWith('any_stock_symbol')
+  })
+
+  it('Should return StockQuoteNotFoundError if FetchStockQuoteBySymbolApi returns null', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote').mockReturnValueOnce(
+      Promise.resolve(null)
+    )
+    const result = await sut.perform(makeFetchStockGainsData())
+    expect(result.value).toEqual(new StockQuoteNotFoundError('any_stock_symbol'))
   })
 })
