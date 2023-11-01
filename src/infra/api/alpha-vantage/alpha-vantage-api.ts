@@ -67,6 +67,9 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
     if (!response.data) {
       return null
     }
+    if (response.data.Information) {
+      throw new MaximumLimitReachedError(response.data)
+    }
     const keys = Object.keys(response.data?.['Time Series (Daily)'])
     if (keys.length === 0) {
       return null
