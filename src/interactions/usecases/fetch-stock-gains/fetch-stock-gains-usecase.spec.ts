@@ -4,6 +4,7 @@ import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { FetchStockGainsUseCase } from './fetch-stock-gains-usecase'
 import type { StockQuote } from '@/domain/models/stock-quote'
+import { CalculateStockGains } from '@/domain/core/calculate-stock-gains'
 
 const makeFetchStockGainsData = (): FetchStockGainsData => ({
   stockSymbol: 'any_stock_symbol',
@@ -19,7 +20,7 @@ const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
 
 const makeFakeStockQuote = (): StockQuote => ({
   name: 'any_stock_name',
-  lastPrice: 120.99,
+  lastPrice: 150.99,
   pricedAt: 'any_priced_at'
 })
 
@@ -108,5 +109,16 @@ describe('FetchStockGains UseCase', () => {
     )
     const promise = sut.perform(makeFetchStockGainsData())
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should call CalculateStockGains with correct values', async () => {
+    const { sut } = makeSut()
+    const executeSpy = jest.spyOn(CalculateStockGains, 'execute')
+    await sut.perform(makeFetchStockGainsData())
+    expect(executeSpy).toHaveBeenCalledWith({
+      lastPrice: 150.99,
+      pricedAtDate: 130.99,
+      purchasedAmount: 1000
+    })
   })
 })
