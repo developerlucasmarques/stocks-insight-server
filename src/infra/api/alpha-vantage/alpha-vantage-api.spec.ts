@@ -305,5 +305,12 @@ describe('AlphaVantageApi', () => {
       const result = await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
       expect(result).toBeNull()
     })
+
+    it('Should throw if axios throws', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(404)
+      const promise = sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
+      await expect(promise).rejects.toThrow()
+    })
   })
 })
