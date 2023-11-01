@@ -55,4 +55,13 @@ describe('FetchStockGains UseCase', () => {
     const result = await sut.perform(makeFetchStockGainsData())
     expect(result.value).toEqual(new StockQuoteAtDateNotFoundError('any_stock_symbol', '2023-01-02'))
   })
+
+  it('Should throw if FetchStockQuoteAtDateApi throws', async () => {
+    const { sut, fetchStockQuoteAtDateApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteAtDateApiStub, 'fetchStockQuoteAtDate').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFetchStockGainsData())
+    await expect(promise).rejects.toThrow()
+  })
 })
