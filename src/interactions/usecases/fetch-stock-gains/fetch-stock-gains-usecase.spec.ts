@@ -100,4 +100,13 @@ describe('FetchStockGains UseCase', () => {
     const result = await sut.perform(makeFetchStockGainsData())
     expect(result.value).toEqual(new StockQuoteNotFoundError('any_stock_symbol'))
   })
+
+  it('Should throw if FetchStockQuoteBySymbolApi throws', async () => {
+    const { sut, fetchStockQuoteBySymbolApiStub } = makeSut()
+    jest.spyOn(fetchStockQuoteBySymbolApiStub, 'fetchStockQuote').mockReturnValueOnce(
+      Promise.reject(new Error())
+    )
+    const promise = sut.perform(makeFetchStockGainsData())
+    await expect(promise).rejects.toThrow()
+  })
 })
