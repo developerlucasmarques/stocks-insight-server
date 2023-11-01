@@ -1,11 +1,15 @@
-import type { Controller, Validation } from '../../contracts'
-import type { HttpRequest, HttpResponse } from '../../http-types/http'
+import type { Controller, Validation } from '@/presentation/contracts'
+import { badRequest } from '@/presentation/helpers/http/http-helper'
+import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 
 export class FetchStockGainsController implements Controller {
   constructor (private readonly validation: Validation) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    await this.validation.validate(httpRequest.params)
+    const validationResult = await this.validation.validate(httpRequest.params)
+    if (validationResult.isLeft()) {
+      return badRequest(validationResult.value)
+    }
     return await Promise.resolve({
       body: '', statusCode: 0
     })
