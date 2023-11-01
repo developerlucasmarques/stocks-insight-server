@@ -1,6 +1,6 @@
 import type { FetchStockGains } from '@/domain/contracts'
 import type { Controller, Validation } from '@/presentation/contracts'
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 
 export class FetchStockGainsController implements Controller {
@@ -22,9 +22,7 @@ export class FetchStockGainsController implements Controller {
       if (fetchStockGainsResult.isLeft()) {
         return notFound(fetchStockGainsResult.value)
       }
-      return await Promise.resolve({
-        body: '', statusCode: 0
-      })
+      return ok(fetchStockGainsResult.value)
     } catch (error: any) {
       return serverError(error)
     }
