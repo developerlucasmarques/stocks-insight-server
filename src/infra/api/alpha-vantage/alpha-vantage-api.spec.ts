@@ -6,6 +6,7 @@ import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { DailyStockQuote, GlobalStockQuote } from './types'
 import { type StockQuote } from '@/domain/models/stock-quote'
+import { type FetchStockQuoteAtDateAndLastDateApiData } from '@/interactions/contracts/api'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -57,6 +58,11 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
   lastPrice: 167.09,
   pricedAt: '2023-01-01'
 }])
+
+const makeFetchStockQuoteAtDateData = (): FetchStockQuoteAtDateAndLastDateApiData => ({
+  stockSymbol: 'AAPL',
+  quoteAtDate: '2023-01-02'
+})
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -271,6 +277,17 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchManyStockQuotes(['AAPL', 'TSLA'])
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
+  })
+
+  describe('fetchStockQuoteAtDate()', () => {
+    const stockQuoteAtDateUrl = makeFakeUrl('TIME_SERIES_DAILY', 'AAPL', 'full')
+
+    it('Should call axios with correct url', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, makeFakeDailyStockQuote())
+      await sut.fetchStockQuoteAtDate(makeFetchStockQuoteAtDateData())
+      expect(axiosMock.history.get[0].url).toBe(stockQuoteAtDateUrl)
     })
   })
 })
