@@ -51,6 +51,7 @@ Exemplo:
 
 ### Respostas
 - Código de status: **400 Bad Request**
+  - ❌ Se o símbolo da ação for inválido.
   - ❌ Se a data da possível compra for inválida.
   - ❌ Se o valor que seria investido for inválido.
 - Código de status: **404 Not Found**
