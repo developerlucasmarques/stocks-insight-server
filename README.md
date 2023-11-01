@@ -25,14 +25,10 @@ Eles também mostram como as tarefas estão divididas em camadas, como a camada 
 
 Você pode consultá-los em [**Diagrams.drawio**](https://drive.google.com/file/d/15SF0pyGC29hgEsqEkcvuI9sPGfElF8Xt/view?usp=sharing)
 
-
-
-
-
-
 ## Cache de Símbolos Ações da Nasdaq na API AlphaVantage
 
-Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscadas pela API AlphaVantage e salvas em cache. Essa iniciativa visa otimizar o uso dos recursos, economizando requisições à API AlphaVantage buscando símbolos de ações inválidos.
+Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscadas pela EODHD e salvas em cache. Essa iniciativa visa otimizar o uso dos recursos, economizando requisições à API AlphaVantage buscando símbolos de ações inválidos. 
+*(***OBS***: Alguns símbolos não são encontrados na API EODHD, como por exemplo 'IBM', o que causa um erro de validação. Irei corrigir esse bug em breve)*
 
 - **Inicialização do Servidor**: Ao iniciar o servidor, uma tarefa de busca é acionada para recuperar todas as ações cotadas na Nasdaq.
 
