@@ -1,4 +1,5 @@
 import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
+import { CalculateStockGains } from '@/domain/core/calculate-stock-gains'
 import { StockQuoteAtDateNotFoundError, StockQuoteNotFoundError } from '@/domain/errors'
 import type { FetchStockQuoteAtDateApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import { left, right } from '@/shared/either'
@@ -10,7 +11,7 @@ export class FetchStockGainsUseCase implements FetchStockGains {
   ) {}
 
   async perform (data: FetchStockGainsData): Promise<FetchStockGainsResponse> {
-    const { stockSymbol, purchasedAt } = data
+    const { stockSymbol, purchasedAt, purchasedAmount } = data
     const stockQuoteAtDate = await this.fetchStockQuoteAtDateApi.fetchStockQuoteAtDate({
       stockSymbol, quoteDate: purchasedAt
     })
@@ -21,6 +22,12 @@ export class FetchStockGainsUseCase implements FetchStockGains {
     if (!stockQuote) {
       return left(new StockQuoteNotFoundError(stockSymbol))
     }
+    CalculateStockGains.execute({
+      purchasedAmount,
+      lastPrice: stockQuote.lastPrice,
+      pricedAtDate: stockQuoteAtDate.pricedAtDate
+    })
+
     return right({
       name: 'IBM',
       lastPrice: 150.50,
