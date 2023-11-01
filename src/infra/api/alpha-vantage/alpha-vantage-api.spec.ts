@@ -7,6 +7,7 @@ import MockAdapter from 'axios-mock-adapter'
 import { AlphaVantageApi } from './alpha-vantage-api'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { DailyStockQuote, GlobalStockQuote } from './types'
+import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -64,11 +65,11 @@ const makeFakeStockQuotes = (): StockQuote[] => ([{
   pricedAt: '2023-01-01'
 }])
 
-// const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
-//   name: 'AAPL',
-//   pricedAtDate: 130.99,
-//   quoteDate: '2023-01-02'
-// })
+const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
+  name: 'AAPL',
+  pricedAtDate: 140.50,
+  quoteDate: '2023-01-02'
+})
 
 const makeFakeGlobalStockQuote = (): GlobalStockQuote => ({
   'Global Quote': {
@@ -325,6 +326,13 @@ describe('AlphaVantageApi', () => {
       const promise = sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
       await expect(promise).rejects.toThrow()
       await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
+    })
+
+    it('Should return a StockQuoteAtDate if fetch stock quote at date is a success', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, makeFakeDailyStockQuote())
+      const result = await sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
+      expect(result).toEqual(makeFakeStockQuoteAtDate())
     })
   })
 })
