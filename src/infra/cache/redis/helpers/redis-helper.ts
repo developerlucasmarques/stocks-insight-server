@@ -1,5 +1,5 @@
 import { Redis } from 'ioredis'
-import env from '@/main/config/envs/redis-env'
+import env from '@/main/config/env'
 
 export class RedisHelper {
   private static cli: Redis | null
@@ -7,9 +7,9 @@ export class RedisHelper {
   static connect (): void {
     if (!RedisHelper.cli) {
       this.cli = new Redis({
-        host: env.host,
-        port: Number(env.port),
-        password: env.password
+        host: env.redisHost,
+        port: Number(env.redisPort),
+        password: env.redisPassword
       })
     }
   }
