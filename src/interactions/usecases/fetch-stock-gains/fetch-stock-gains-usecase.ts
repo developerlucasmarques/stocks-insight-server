@@ -22,19 +22,18 @@ export class FetchStockGainsUseCase implements FetchStockGains {
     if (!stockQuote) {
       return left(new StockQuoteNotFoundError(stockSymbol))
     }
-    CalculateStockGains.execute({
+    const { capitalGains } = CalculateStockGains.execute({
       purchasedAmount,
       lastPrice: stockQuote.lastPrice,
       pricedAtDate: stockQuoteAtDate.pricedAtDate
     })
-
     return right({
-      name: 'IBM',
-      lastPrice: 150.50,
-      pricedAtDate: 140.50,
-      purchasedAmount: 9975.50,
-      purchasedAt: '2023-01-30',
-      capitalGains: 710
+      name: stockSymbol,
+      lastPrice: stockQuote.lastPrice,
+      pricedAtDate: stockQuoteAtDate.pricedAtDate,
+      purchasedAmount,
+      purchasedAt,
+      capitalGains
     })
   }
 }
