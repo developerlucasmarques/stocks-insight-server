@@ -5,11 +5,12 @@ import type { FetchStockQuoteAtDateApi, FetchStockQuoteAtDateApiData, FetchStock
 import { FetchStockGainsUseCase } from './fetch-stock-gains-usecase'
 import type { StockQuote } from '@/domain/models/stock-quote'
 import { CalculateStockGains } from '@/domain/core/calculate-stock-gains'
+import { type StockGains } from '@/domain/models/stock-gains'
 
 const makeFetchStockGainsData = (): FetchStockGainsData => ({
   stockSymbol: 'any_stock_symbol',
   purchasedAt: '2023-01-02',
-  purchasedAmount: 1000
+  purchasedAmount: 9900.30
 })
 
 const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
@@ -19,9 +20,18 @@ const makeFakeStockQuoteAtDate = (): StockQuoteAtDate => ({
 })
 
 const makeFakeStockQuote = (): StockQuote => ({
-  name: 'any_stock_name',
+  name: 'any_stock_symbol',
   lastPrice: 150.99,
-  pricedAt: 'any_priced_at'
+  pricedAt: '2023-01-10'
+})
+
+const makeFakeStockGains = (): StockGains => ({
+  name: 'any_stock_symbol',
+  lastPrice: 150.99,
+  pricedAtDate: 130.99,
+  purchasedAmount: 9900.30,
+  purchasedAt: '2023-01-02',
+  capitalGains: 1423.95
 })
 
 const makeFetchStockQuoteAtDateApiApi = (): FetchStockQuoteAtDateApi => {
@@ -118,7 +128,13 @@ describe('FetchStockGains UseCase', () => {
     expect(executeSpy).toHaveBeenCalledWith({
       lastPrice: 150.99,
       pricedAtDate: 130.99,
-      purchasedAmount: 1000
+      purchasedAmount: 9900.30
     })
+  })
+
+  it('Should return StockGains if CalculateStockGains is a success', async () => {
+    const { sut } = makeSut()
+    const result = await sut.perform(makeFetchStockGainsData())
+    expect(result.value).toEqual(makeFakeStockGains())
   })
 })
