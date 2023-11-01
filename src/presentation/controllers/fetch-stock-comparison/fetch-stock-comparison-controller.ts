@@ -1,8 +1,8 @@
-import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
+import type { FetchStockComparison } from '@/domain/contracts'
 import type { Controller, Validation } from '@/presentation/contracts'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 import type { Either } from '@/shared/either'
-import type { FetchStockComparison } from '@/domain/contracts'
 
 export class FetchStockComparisonController implements Controller {
   constructor (
@@ -22,15 +22,10 @@ export class FetchStockComparisonController implements Controller {
           return badRequest(validation.value)
         }
       }
-      const stocksToCompare = httpRequest.query.stocksToCompare as string
-      let stocksToCompareArray: string[] = []
-      if (stocksToCompare.includes(',')) {
-        const split = stocksToCompare.split(',')
-        stocksToCompareArray = split.filter(stock => stock.trim() !== '')
-      }
+      const stocksToCompare = httpRequest.query.stocksToCompare
       const fetchStockComparisonResult = await this.fetchStockComparison.perform({
         stockSymbol: httpRequest.params.stockSymbol,
-        stocksToCompare: (stocksToCompareArray.length > 0) ? stocksToCompareArray : [stocksToCompare]
+        stocksToCompare: (stocksToCompare instanceof Array) ? stocksToCompare : [stocksToCompare]
       })
       if (fetchStockComparisonResult.isLeft()) {
         return notFound(fetchStockComparisonResult.value)

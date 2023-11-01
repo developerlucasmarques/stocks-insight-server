@@ -1,18 +1,18 @@
 import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
+import { NoStockQuoteFoundError } from '@/domain/errors'
 import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
 import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
-import { NoStockQuoteFoundError } from '@/domain/errors'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
     stockSymbol: 'any_stock_symbol'
   },
   query: {
-    stocksToCompare: 'another_stock,other_stock'
+    stocksToCompare: ['another_stock', 'other_stock']
   }
 })
 
@@ -145,19 +145,6 @@ describe('FetchStockComparison Controller', () => {
     expect(performSpy).toHaveBeenCalledWith({
       stockSymbol: 'any_stock_symbol',
       stocksToCompare: ['another_stock']
-    })
-  })
-
-  it('Should call FetchStockComparison without any empty stocksToCompare', async () => {
-    const { sut, fetchStockComparisonStub } = makeSut()
-    const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
-    await sut.handle({
-      params: { stockSymbol: 'any_stock_symbol' },
-      query: { stocksToCompare: 'another_stock,,,,other,,,,other_stock' }
-    })
-    expect(performSpy).toHaveBeenCalledWith({
-      stockSymbol: 'any_stock_symbol',
-      stocksToCompare: ['another_stock', 'other', 'other_stock']
     })
   })
 
