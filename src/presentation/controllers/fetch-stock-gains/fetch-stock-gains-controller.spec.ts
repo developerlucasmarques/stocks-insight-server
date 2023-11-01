@@ -1,7 +1,7 @@
 import type { FetchStockGains, FetchStockGainsData, FetchStockGainsResponse } from '@/domain/contracts'
 import type { StockGains } from '@/domain/models/stock-gains'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest, notFound, serverError } from '@/presentation/helpers/http/http-helper'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
 import { left, right, type Either } from '@/shared/either'
 import { FetchStockGainsController } from './fetch-stock-gains-controller'
@@ -109,5 +109,11 @@ describe('FetchStockGains Controller', () => {
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  it('Should return 200 if FetchStockGains is a success', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(ok(makeFakeStockGains()))
   })
 })
