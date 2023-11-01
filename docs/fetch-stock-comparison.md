@@ -6,7 +6,7 @@ Esta funcionalidade permite aos usuários comparar o preço atual de uma ação 
 
 ## Endpoint
 
-`GET /stocks/`***:stockName***`/compare?stocksToCompare=`***stockCompare1***`,`***stockCompare2***
+`GET /stocks/`***:stockName***`/compare?stocksToCompare[]=`***stockCompare1***`&stocksToCompare[]=`***stockCompare2***
 
 ## Parâmetros da Requisição
 
@@ -24,13 +24,13 @@ Esta funcionalidade permite aos usuários comparar o preço atual de uma ação 
 - `GET /stocks/AAPL/compare?stocksToCompare=GOOGL,MSFT`
 
 ## Caso de sucesso
-- ❌ Busca o símbolo das ações a comparar em cache.
-- ❌ Valida se os símbolos das ações existem.
-- ❌ Busca os dados das ações a comparar na API (https://www.alphavantage.co).
+- ✅ Busca o símbolo das ações a comparar em cache.
+- ✅ Valida se os símbolos das ações existem.
+- ✅ Busca os dados das ações a comparar na API (https://www.alphavantage.co).
 
 ### Resposta
-- ❌ Código de status: **200 OK**
-- ❌ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
+- ✅ Código de status: **200 OK**
+- ✅ Corpo da resposta: Um objeto JSON contendo os dados da ação no período especificado.
 
 Exemplo:
 
@@ -60,9 +60,12 @@ Exemplo:
 ## Casos de Exceção
 
 ### Respostas
+- Código de status: **400 Not Found**
+  - ✅ Se o símbolo da ação for inválido.
+  - ✅ Se algum símbolo de ação para comparar.
 - Código de status: **404 Not Found**
-  - ❌ Se algum dos símbolos das ações não for encontrado.
+  - ✅ Se algum dos símbolos das ações não for encontrado.
 - Código de status: **500 Internal Server Error**
-  - ❌ Em caso de erro ao fazer busca dos símbolos em cache.
-  - ❌ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
-  - ❌ Em caso de erro interno no servidor.
+  - ✅ Em caso de erro ao fazer busca dos símbolos em cache.
+  - ✅ Em caso de erro ao tentar conectar com a API (https://www.alphavantage.co).
+  - ✅ Em caso de erro interno no servidor.
