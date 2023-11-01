@@ -302,5 +302,14 @@ describe('AlphaVantageApi', () => {
       const result = await sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
       expect(result).toBeNull()
     })
+
+    it('Should return null if AlphaVantage return "Time Series (Daily)" but empty', async () => {
+      const sut = makeSut()
+      axiosMock.onGet(stockQuoteAtDateUrl).reply(200, {
+        'Time Series (Daily)': {}
+      })
+      const result = await sut.fetchStockQuoteAtDate(makeFakeFetchStockQuoteAtDateApiData())
+      expect(result).toBeNull()
+    })
   })
 })
