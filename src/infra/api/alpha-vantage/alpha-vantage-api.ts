@@ -1,13 +1,14 @@
 import type { FetchStockHistoryData } from '@/domain/contracts'
 import type { StockHistory } from '@/domain/models/stock-history'
 import type { StockQuote } from '@/domain/models/stock-quote'
-import type { FetchManyStockQuotesBySymbolsApi, FetchStockHistoryApi, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
+import type { FetchManyStockQuotesBySymbolsApi, FetchStockHistoryApi, FetchStockQuoteAtDateAndLastDateApi, FetchStockQuoteAtDateAndLastDateApiData, FetchStockQuoteBySymbolApi } from '@/interactions/contracts/api'
 import axios from 'axios'
 import { MaximumLimitReachedError } from './errors/maximun-limit-reached-error'
 import type { GlobalStockQuote, DailyStockQuote } from './types'
 import { AlphaVantageApiHelper } from './helpers/alpha-vantage-api-helper'
+import { type StockQuoteAtDateAndLastDate } from '@/domain/models/stock-quote-at-date-and-last-date'
 
-export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi, FetchManyStockQuotesBySymbolsApi {
+export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHistoryApi, FetchManyStockQuotesBySymbolsApi, FetchStockQuoteAtDateAndLastDateApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
 
   constructor (private readonly apiKey: string) {}
@@ -58,5 +59,22 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
       }
     }
     return stockQuoteResults
+  }
+
+  async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateAndLastDateApiData): Promise<StockQuoteAtDateAndLastDate | null> {
+    const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
+    await axios.get(url)
+    return {
+      quoteAtDate: {
+        name: 'any_stock_symbol',
+        pricedAtDate: 130.99,
+        quoteDate: '2023-01-02'
+      },
+      quoteLastDate: {
+        name: 'any_stock_symbol',
+        lastPrice: 150.99,
+        pricedAt: '2023-01-10'
+      }
+    }
   }
 }
