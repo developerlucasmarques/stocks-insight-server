@@ -1,9 +1,12 @@
 # Stock-Insight
 
 ## Descrição
+
 O Stock Insight é um backend desenvolvido para teste de uma vaga onde o requisito era desenvolver um sitema em Node para uma corretora de ações. Permitindo investidores avaliem o desempenho de ações em vários cenários. Este backend oferece funcionalidades para obter informações sobre o preço atual, preço histórico, comparação de preços com outras ações e projeção de ganhos com a compra em uma data específica.
 
+
 ## Requisitos Técnicos
+
 - Implementado em Node.js, com suporte a HTTP.
 - Formato de serialização das requisições e respostas em JSON.
 - Testes automatizados.
@@ -11,12 +14,13 @@ O Stock Insight é um backend desenvolvido para teste de uma vaga onde o requisi
 - Integração com um frontend de uma single-page application (SPA).
 - Tratamento de erros, com ênfase em casos que poderiam gerar erros ou duplicidades nos dados.
 
-## APIs construídas
+## API's Construídas
 
 1. [Buscar cotação atual de uma ação](./docs/fetch-stock-quote.md) 
 2. [Buscar preço histórico de uma ação](./docs/fetch-stock-history.md) 
 3. [Comparar preço de uma ação com outras ações](./docs/fetch-stock-comparison.md)
 4. [Calcular projeção de ganhos com a compra de uma ação em uma data específica](./docs/fetch-stock-gains.md)
+
 
 ## Diagramas de Classes
 
@@ -25,10 +29,10 @@ Eles também mostram como as tarefas estão divididas em camadas, como a camada 
 
 Você pode consultá-los em [**Diagrams.drawio**](https://drive.google.com/file/d/15SF0pyGC29hgEsqEkcvuI9sPGfElF8Xt/view?usp=sharing)
 
-## Cache de Símbolos Ações da Nasdaq na API AlphaVantage
+## Cache de Símbolos de Ações da Nasdaq
 
 Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscadas pela EODHD e salvas em cache. Essa iniciativa visa otimizar o uso dos recursos, economizando requisições à API AlphaVantage buscando símbolos de ações inválidos. 
-*(***OBS***: Alguns símbolos não são encontrados na API EODHD, como por exemplo 'IBM', o que causa um erro de validação. Irei corrigir esse bug em breve)*
+*(***OBS***: Alguns símbolos não são encontrados na API EODHD, como por exemplo 'IBM', o que causa um erro de validação. Irei corrigir este bug em breve)*
 
 - **Inicialização do Servidor**: Ao iniciar o servidor, uma tarefa de busca é acionada para recuperar todas as ações cotadas na Nasdaq.
 
@@ -167,11 +171,22 @@ O design pattern Decorator foi utilizado para decorar as Factorys dos Controller
 
 - **Docker** - [https://www.docker.com/get-started/](https://www.docker.com/get-started/)
 
+Todas depedências para rodar o projeto como Node, MongoDB e Redis estão configuradas no docker compose, então não é necessário instalar nada além de que o Docker.
+
+
 ## Variáveis de Ambiente
 
 Você deverá criar um arquivo .env na raiz do projeto. Poderá usar os dados das variáveis a baixo para setar em seu arquivo:
 
 Para conseguir sua ***ALPHA_VANTAGE_API_KEY*** acesse: [https://www.alphavantage.co/](https://www.alphavantage.co/)
+
+Cada chave possui um limite de 25 acessos diários a Alpha Vantage, porém o IP da máquina também possui este limite. Então é necessário trocar de chave quando o chegar em 25 acessos e usar uma VPN para mudar o IP da máquina.
+
+- Você pode usar estas chaves gratuitas:
+	- R8E76FACZ1GBC7IA
+	- MKV74ROUOC0OGWAL
+	- 5IXWXRK9CTS3EQ8T
+	- XLC9YFQ0F4RVMW8W
 
 Para ter acesso a um ***EODHD_API_TOKEN*** registre-se em:  [https://eodhd.com/](https://eodhd.com/)
 
@@ -187,8 +202,9 @@ DB_PORT=27017
 DB_NAME=stocks
 DB_USERNAME=root
 DB_PASSWORD=password
-MONGO_URL=mongodb://db:27017/stocks
+MONGO_URL=mongodb://db:27017/stocks-insight
 ```
+
 
 ## Instalação e Execução
 
@@ -215,13 +231,12 @@ MONGO_URL=mongodb://db:27017/stocks
  Após isto digite o comando a baixo. Este comando criará os containers docker, instalará as dependências e iniciará o servidor.
 
  ```
- 	docker.bat
+ 	npm run up
  ```
- 
+ Este comando irá criar a pasta dist com os arquivos do projeto em JavaScript, instalará as dependências, subirá os containers docker e iniciará o servidor.
 
 
 ## Execução de Testes
-
 
 Para executar todos os testes do projeto execute o comando:
 
@@ -246,6 +261,11 @@ Para visualizar a cobertura de testes do projeto execute o comando:
  ```
  	npm run test:ci
  ```
+
+
+## Erros
+
+Caso não consiga rodar o projeto, me contate pelo Linkedin a baixo.
 
 
 ## Autor

@@ -10,6 +10,7 @@
   },
   "scripts": {
     "start": "node dist/main/server.js",
+    "up": "npm run build && docker-compose up",
     "build": "rimraf dist && tsc -p tsconfig-build.json",
     "dev": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
