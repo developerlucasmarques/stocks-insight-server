@@ -43,6 +43,11 @@ Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automa
 - **Economia de Recursos**: Evita requisições desnecessárias à API AlphaVantage, economizando recursos e minimizando o uso da cota de chamadas à API.
 
 
+### Log de Erros:
+
+O design pattern Decorator foi utilizado para decorar as Factorys dos Controllers, que em caso de alguma exceção, registar a stack do erro no MongoDB. Isso envolve encapsular a execução dos controladores em classes decoradoras que capturam e registram exceções, incluindo data, nome do erro e a stack. Essa prática melhora a confiabilidade do sistema e oferece histórico detalhado de erros para análises e melhorias.
+
+
 ## Princípios
 
 - Single Responsibility Principle (SRP)
@@ -162,9 +167,32 @@ Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automa
 
 - **Docker** - [https://www.docker.com/get-started/](https://www.docker.com/get-started/)
 
-## Instalação
+## Variáveis de Ambiente
 
- Exemplo:
+Você deverá criar um arquivo .env na raiz do projeto. Poderá usar os dados das variáveis a baixo para setar em seu arquivo:
+
+Para conseguir sua ***ALPHA_VANTAGE_API_KEY*** acesse: [https://www.alphavantage.co/](https://www.alphavantage.co/)
+
+Para ter acesso a um ***EODHD_API_TOKEN*** registre-se em:  [https://eodhd.com/](https://eodhd.com/)
+
+```m
+ALPHA_VANTAGE_API_KEY=SUA_API_KEY
+EODHD_API_TOKEN=SEU_EODHD_TOKEN
+REDIS_PASSWORD=
+REDIS_PORT=6379
+REDIS_HOST=redis
+SERVER_PORT=5050
+SERVER_HOST=localhost
+DB_PORT=27017
+DB_NAME=stocks
+DB_USERNAME=root
+DB_PASSWORD=password
+MONGO_URL=mongodb://db:27017/stocks
+```
+
+## Instalação e Execução
+
+ **Exemplo**:
 
  Clone esse projeto em seu computador com o comando:
 
@@ -181,17 +209,13 @@ Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automa
  Já pasta da aplicação em seu terminal, digite o seguinte comando:
 
  ```
- 	docker compose up
+ 	docker.bat
  ```
+ Este comando irá subir os containers docker, instalará as dependências e iniciará o servidor.
 
 
-## Execução
+## Execução de Testes
 
-Após ter configurado o projeto e ter aguardado o container Docker ser criado, execute o comando:
-
-```
- 	npm start
-```
 
 Para executar todos os testes do projeto execute o comando:
 
