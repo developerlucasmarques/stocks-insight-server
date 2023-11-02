@@ -42,7 +42,6 @@ export class AlphaVantageApiHelper {
 
   static formatStockQuoteAtDate (dailyStock: DailyStockQuote, data: FetchStockQuoteAtDateApiData): StockQuoteAtDate {
     const stockQuoteAtDate = dailyStock['Time Series (Daily)']
-    console.log('LOGGGGGGGG', stockQuoteAtDate[data.quoteDate])
     const stockQuoteAtDateFormated: StockQuoteAtDate = {
       name: data.stockSymbol,
       quoteDate: data.quoteDate,
