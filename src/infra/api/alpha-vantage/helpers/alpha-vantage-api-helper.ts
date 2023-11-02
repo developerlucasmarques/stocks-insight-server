@@ -51,13 +51,14 @@ export class AlphaVantageApiHelper {
     return stockQuoteAtDateFormated
   }
 
-  static dataOrInformationExist (data: any): boolean {
-    if (!data) {
-      return false
-    }
+  static dataExist (data: any): boolean {
+    if (!data) return false
+    return true
+  }
+
+  static reachedTheLimit (data: any): void {
     if (data.Information) {
       throw new MaximumLimitReachedError(data)
     }
-    return true
   }
 }

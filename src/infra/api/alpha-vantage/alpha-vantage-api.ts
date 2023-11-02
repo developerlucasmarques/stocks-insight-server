@@ -22,9 +22,10 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
   async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
     const url = this.makeUrl('GLOBAL_QUOTE', stockSymbol)
     const response = await axios.get(url)
-    if (!AlphaVantageApiHelper.dataOrInformationExist(response.data)) {
+    if (!AlphaVantageApiHelper.dataExist(response.data)) {
       return null
     }
+    AlphaVantageApiHelper.reachedTheLimit(response.data)
     const data: GlobalStockQuote = response.data
     return AlphaVantageApiHelper.formatStockQuote(data)
   }
@@ -32,9 +33,10 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
   async fetchStockHistory (data: FetchStockHistoryData): Promise<null | StockHistory> {
     const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
     const response = await axios.get(url)
-    if (!AlphaVantageApiHelper.dataOrInformationExist(response.data)) {
+    if (!AlphaVantageApiHelper.dataExist(response.data)) {
       return null
     }
+    AlphaVantageApiHelper.reachedTheLimit(response.data)
     const keys = Object.keys(response.data?.['Time Series (Daily)'])
     if (keys.length === 0) {
       return null
@@ -57,9 +59,10 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
   async fetchStockQuoteAtDate (data: FetchStockQuoteAtDateApiData): Promise<null | StockQuoteAtDate> {
     const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
     const response = await axios.get(url)
-    if (!AlphaVantageApiHelper.dataOrInformationExist(response.data)) {
+    if (!AlphaVantageApiHelper.dataExist(response.data)) {
       return null
     }
+    AlphaVantageApiHelper.reachedTheLimit(response.data)
     const timeSeries = response.data?.['Time Series (Daily)']
     const keys = Object.keys(timeSeries)
     if (keys.length === 0) {
