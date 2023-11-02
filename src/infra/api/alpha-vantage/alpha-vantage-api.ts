@@ -37,8 +37,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
       return null
     }
     AlphaVantageApiHelper.reachedTheLimit(response.data)
-    const keys = Object.keys(response.data?.['Time Series (Daily)'])
-    if (keys.length === 0) {
+    if (!AlphaVantageApiHelper.existInData(response.data, 'Time Series (Daily)')) {
       return null
     }
     const dailyStock: DailyStockQuote = response.data
@@ -63,12 +62,7 @@ export class AlphaVantageApi implements FetchStockQuoteBySymbolApi, FetchStockHi
       return null
     }
     AlphaVantageApiHelper.reachedTheLimit(response.data)
-    const timeSeries = response.data?.['Time Series (Daily)']
-    const keys = Object.keys(timeSeries)
-    if (keys.length === 0) {
-      return null
-    }
-    if (!timeSeries[data.quoteDate]) {
+    if (!response.data?.['Time Series (Daily)'][data.quoteDate]) {
       return null
     }
     const dailyStock: DailyStockQuote = response.data

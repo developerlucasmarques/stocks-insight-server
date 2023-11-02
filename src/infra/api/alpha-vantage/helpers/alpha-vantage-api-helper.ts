@@ -61,4 +61,13 @@ export class AlphaVantageApiHelper {
       throw new MaximumLimitReachedError(data)
     }
   }
+
+  static existInData (data: any, field: string): boolean {
+    const value = data?.[field]
+    const keys = Object.keys(value)
+    if (keys.length === 0) {
+      return false
+    }
+    return true
+  }
 }
