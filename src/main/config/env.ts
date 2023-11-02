@@ -6,7 +6,7 @@ export default {
   alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY ?? '',
   eodhdApiToken: process.env.EODHD_API_TOKEN ?? '',
 
-  mongoUrl: process.env.MONGO_URL ?? '',
+  mongoUrl: process.env.MONGO_URL ?? 'mongodb://127.0.0.1:27017/stocks-insight',
 
   redisPassword: process.env.REDIS_PASSWORD ?? '',
   redisPort: process.env.REDIS_PORT ?? '6379',
