@@ -4,6 +4,7 @@ import type { StockQuote } from '@/domain/models/stock-quote'
 import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 import type { FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
 import type { DailyStockQuote, GlobalStockQuote } from '../types'
+import { MaximumLimitReachedError } from '../errors/maximun-limit-reached-error'
 
 export class AlphaVantageApiHelper {
   private static parseNumFixed (value: string): number {
@@ -48,5 +49,15 @@ export class AlphaVantageApiHelper {
       priceAtDate: this.parseNumFixed(stockQuoteAtDate[data.quoteDate]['4. close'])
     }
     return stockQuoteAtDateFormated
+  }
+
+  static dataOrInformationExist (data: any): boolean {
+    if (!data) {
+      return false
+    }
+    if (data.Information) {
+      throw new MaximumLimitReachedError(data)
+    }
+    return true
   }
 }
