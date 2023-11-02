@@ -209,9 +209,15 @@ MONGO_URL=mongodb://db:27017/stocks
  Já pasta da aplicação em seu terminal, digite o seguinte comando:
 
  ```
+ 	npm run build
+ ```
+
+ Após isto digite o comando a baixo. Este comando criará os containers docker, instalará as dependências e iniciará o servidor.
+
+ ```
  	docker.bat
  ```
- Este comando irá subir os containers docker, instalará as dependências e iniciará o servidor.
+ 
 
 
 ## Execução de Testes
