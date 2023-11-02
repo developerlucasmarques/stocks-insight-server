@@ -3,11 +3,44 @@ version: '3.3'
 services:
   redis:
     image: redis:latest
+    container_name: redis-cache
     restart: always
     ports:
       - "6379:6379"
     volumes:
       - /path/to/local/data:/root/redis
       - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
-    env_file:
-      redis.env
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+      REDIS_PORT: ${REDIS_PORT}
+      REDIS_HOST: ${REDIS_HOST}
+
+  db:
+    image: mongo:4.2
+    container_name: mongo-db
+    restart: always
+    volumes:
+      - ./data:/data/db
+    ports:
+      - ${DB_PORT}:27017
+
+  api:
+    container_name: api-container
+    build: .
+    restart: always
+    image: stocks-insight
+    command: npm start
+    volumes:
+      - ./dist:/usr/src/stocks-insight/dist
+    ports:
+      - ${SERVER_PORT}:5050
+    environment:
+      - EODHD_API_TOKEN=${EODHD_API_TOKEN}
+      - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
+      - MONGO_URL=${MONGO_URL}
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - REDIS_PORT=${REDIS_PORT}
+      - REDIS_HOST=${REDIS_HOST}
+    links:
+      - db
+      - redis
