@@ -16,4 +16,12 @@ describe('ConvertToUppercase Middleware', () => {
     const result = await sut.handle(makeFakeRequest())
     expect(result).toEqual(ok({ anyField: 'ANY_VALUE' }))
   })
+
+  it('Should return all fields uppercase if field is array', async () => {
+    const sut = makeSut()
+    const result = await sut.handle({
+      params: { anyField: ['any_value', 'another_value'] }
+    })
+    expect(result).toEqual(ok({ anyField: ['ANY_VALUE', 'ANOTHER_VALUE'] }))
+  })
 })
