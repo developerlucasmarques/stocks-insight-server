@@ -1,6 +1,7 @@
 import axios from 'axios'
 import MockAdapter from 'axios-mock-adapter'
 import { FetchAllSymbolsOfListedStocksAlphaVantageApi } from './fetch-all-symbols-of-listed-stocks-alpha-vantage-api'
+import { MaximumLimitReachedError } from '../../errors/maximun-limit-reached-error'
 
 const apiKey = 'any_api_key'
 const baseUrl = 'https://www.alphavantage.co/query?function='
@@ -51,5 +52,13 @@ describe('FetchAllSymbolsOfListedStocks AlphaVantageApi', () => {
     axiosMock.onGet(makeFakeUrl()).reply(404)
     const promise = sut.fetchAll()
     await expect(promise).rejects.toThrow()
+  })
+
+  it('Should throw if AlphaVantage reached the maximum request limit', async () => {
+    const sut = makeSut()
+    axiosMock.onGet(makeFakeUrl()).reply(200, { Information: 'any_information' })
+    const promise = sut.fetchAll()
+    await expect(promise).rejects.toThrow()
+    await expect(promise).rejects.toBeInstanceOf(MaximumLimitReachedError)
   })
 })
