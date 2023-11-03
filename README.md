@@ -14,12 +14,14 @@ O Stock Insight é um backend desenvolvido para teste de uma vaga onde o requisi
 - Integração com um frontend de uma single-page application (SPA).
 - Tratamento de erros, com ênfase em casos que poderiam gerar erros ou duplicidades nos dados.
 
-## API's Construídas
+## Casos de Usos Construídos
 
 1. [Buscar cotação atual de uma ação](./docs/fetch-stock-quote.md) 
 2. [Buscar preço histórico de uma ação](./docs/fetch-stock-history.md) 
 3. [Comparar preço de uma ação com outras ações](./docs/fetch-stock-comparison.md)
 4. [Calcular projeção de ganhos com a compra de uma ação em uma data específica](./docs/fetch-stock-gains.md)
+5. [Salva todos os símbolos de ações listadas em cache](./docs/add-all-stock-symbols.md)
+
 
 
 ## Diagramas de Classes
@@ -31,8 +33,7 @@ Você pode consultá-los em [**Diagrams.drawio**](https://drive.google.com/file/
 
 ## Cache de Símbolos de Ações da Nasdaq
 
-Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscadas pela EODHD e salvas em cache. Essa iniciativa visa otimizar o uso dos recursos, economizando requisições à API AlphaVantage buscando símbolos de ações inválidos. 
-*(***OBS***: Alguns símbolos não são encontrados na API EODHD, como por exemplo 'IBM', o que causa um erro de validação. Irei corrigir este bug em breve)*
+Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscados na API AlphaVantage e salvos em no Redis. Essa iniciativa visa otimizar o uso dos recursos, diminuinto o tempo de validação em caso de símbolo de ação inexistente além de economizar requisições à API AlphaVantage quando buscado símbolos de ações inválidos.
 
 - **Inicialização do Servidor**: Ao iniciar o servidor, uma tarefa de busca é acionada para recuperar todas as ações cotadas na Nasdaq.
 
@@ -188,11 +189,8 @@ Cada chave possui um limite de 25 acessos diários a Alpha Vantage, porém o IP 
 	- 5IXWXRK9CTS3EQ8T
 	- XLC9YFQ0F4RVMW8W
 
-Para ter acesso a um ***EODHD_API_TOKEN*** registre-se em:  [https://eodhd.com/](https://eodhd.com/)
-
 ```m
 ALPHA_VANTAGE_API_KEY=SUA_API_KEY
-EODHD_API_TOKEN=SEU_EODHD_TOKEN
 REDIS_PASSWORD=
 REDIS_PORT=6379
 REDIS_HOST=redis
@@ -224,11 +222,6 @@ MONGO_URL=mongodb://db:27017/stocks-insight
 
  Já pasta da aplicação em seu terminal, digite o seguinte comando:
 
- ```
- 	npm run build
- ```
-
- Após isto digite o comando a baixo. Este comando criará os containers docker, instalará as dependências e iniciará o servidor.
 
  ```
  	npm run up
