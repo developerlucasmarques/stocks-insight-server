@@ -17,6 +17,13 @@ export class FetchAllSymbolsOfListedStocksAlphaVantageApi implements FetchAllSym
       return []
     }
     AlphaVantageApiHelper.reachedTheLimit(response.data)
-    return []
+    const lines: string[] = response.data.split('\r\n')
+    const symbols: string[] = []
+    for (const line of lines) {
+      const lineSplit = line.split(',')
+      symbols.push(lineSplit[0])
+    }
+    symbols.pop(); symbols.shift()
+    return symbols
   }
 }
