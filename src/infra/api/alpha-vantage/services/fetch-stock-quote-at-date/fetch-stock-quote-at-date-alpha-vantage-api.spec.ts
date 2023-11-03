@@ -2,7 +2,7 @@ import type { StockQuoteAtDate } from '@/domain/models/stock-quote-at-date'
 import type { FetchStockQuoteAtDateApiData } from '@/interactions/contracts/api'
 import type { DailyStockQuote } from '../../types'
 import { MaximumLimitReachedError } from '../../errors/maximun-limit-reached-error'
-import { FetchStockQuoteAtDateAlphaVantageApi } from './alpha-vantage-api'
+import { FetchStockQuoteAtDateAlphaVantageApi } from './fetch-stock-quote-at-date-alpha-vantage-api'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
 
