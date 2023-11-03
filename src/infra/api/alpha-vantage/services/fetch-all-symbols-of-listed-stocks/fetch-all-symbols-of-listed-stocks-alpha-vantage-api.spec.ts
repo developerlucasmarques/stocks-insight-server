@@ -38,4 +38,11 @@ describe('FetchAllSymbolsOfListedStocks AlphaVantageApi', () => {
     await sut.fetchAll()
     expect(axiosMock.history.get[0].url).toBe(makeFakeUrl())
   })
+
+  it('Should return empty if listing status api not found', async () => {
+    const sut = makeSut()
+    axiosMock.onGet(makeFakeUrl()).reply(200, null)
+    const result = await sut.fetchAll()
+    expect(result.length).toBe(0)
+  })
 })
