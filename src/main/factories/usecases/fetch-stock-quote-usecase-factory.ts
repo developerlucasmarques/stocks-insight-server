@@ -1,7 +1,7 @@
 import type { FetchStockQuote } from '@/domain/contracts'
 import { FetchStockQuoteUseCase } from '@/interactions/usecases'
-import { alphaVantageApiFactory } from '../api/alpha-vantage-api-factory'
+import { fetchStockQuoteAlphaVantageApiFactory } from '../api'
 
 export const fetchStockQuoteUseCaseFactory = (): FetchStockQuote => {
-  return new FetchStockQuoteUseCase(alphaVantageApiFactory())
+  return new FetchStockQuoteUseCase(fetchStockQuoteAlphaVantageApiFactory())
 }
