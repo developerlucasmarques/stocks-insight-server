@@ -1,7 +1,7 @@
 import type { FetchStockQuote } from '@/domain/contracts'
 import type { Controller, Validation } from '../../contracts'
-import { badRequest, notFound, ok, serverError } from '../../helpers/http/http-helper'
 import type { HttpRequest, HttpResponse } from '../../http-types/http'
+import { badRequest, notFound, ok, serverError } from '../../helpers/http/http-helper'
 
 export class FetchStockQuoteController implements Controller {
   constructor (
@@ -11,7 +11,6 @@ export class FetchStockQuoteController implements Controller {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      httpRequest.params.stockSymbol = httpRequest.params.stockSymbol.toUpperCase()
       const validationResult = await this.validation.validate(httpRequest.params)
       if (validationResult.isLeft()) {
         return badRequest(validationResult.value)

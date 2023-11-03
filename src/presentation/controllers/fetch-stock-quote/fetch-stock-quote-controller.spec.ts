@@ -55,7 +55,7 @@ describe('FetchStockQuote Controller', () => {
     const { sut, validationStub } = makeSut()
     const validateSpy = jest.spyOn(validationStub, 'validate')
     await sut.handle(makeFakeRequest())
-    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'ANY_STOCK_SYMBOL' })
+    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'any_stock_symbol' })
   })
 
   it('Should return 400 if Validation fails', async () => {
@@ -80,7 +80,7 @@ describe('FetchStockQuote Controller', () => {
     const { sut, fetchStockQuoteStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockQuoteStub, 'perform')
     await sut.handle(makeFakeRequest())
-    expect(performSpy).toHaveBeenCalledWith('ANY_STOCK_SYMBOL')
+    expect(performSpy).toHaveBeenCalledWith('any_stock_symbol')
   })
 
   it('Should return 404 if FetchStockQuote returns StockQuoteNotFoundError', async () => {
