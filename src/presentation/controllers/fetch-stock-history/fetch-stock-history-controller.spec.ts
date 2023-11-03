@@ -40,7 +40,7 @@ const makeFakeStockHistory = (): StockHistory => ({
   }]
 })
 
-const makeValdation = (): Validation => {
+const makeValidation = (): Validation => {
   class ValdationStub implements Validation {
     async validate (input: any): Promise<Either<Error, null>> {
       return await Promise.resolve(right(null))
@@ -65,7 +65,7 @@ type SutTypes = {
 }
 
 const makeSut = (): SutTypes => {
-  const validationStub = makeValdation()
+  const validationStub = makeValidation()
   const fetchStockHistoryStub = makeFetchStockHistory()
   const sut = new FetchStockHistoryController(validationStub, fetchStockHistoryStub)
   return {
