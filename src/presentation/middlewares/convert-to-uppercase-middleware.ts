@@ -12,6 +12,12 @@ export class ConvertToUppercaseMiddleware implements Middleware {
     try {
       const key = this.keyOfHttpRequest
       const field = this.fieldName
+      if (httpRequest[key][field] instanceof Array) {
+        for (let i = 0; i < httpRequest[key][field].length; i++) {
+          httpRequest[key][field][i] = httpRequest[key]?.[field][i].toUpperCase()
+        }
+        return ok(httpRequest[key])
+      }
       httpRequest[key][field] = httpRequest[key]?.[field].toUpperCase()
       return ok(httpRequest[key])
     } catch (error: any) {
