@@ -10,16 +10,12 @@ export class FetchStockHistoryAlphaVantageApi implements FetchStockHistoryApi {
 
   constructor (private readonly apiKey: string) {}
 
-  private makeUrl (func: string, symbol: string, outputsize?: string): string {
-    if (outputsize) {
-      return `${this.baseUrl}${func}&symbol=${symbol}&outputsize=${outputsize}&apikey=${this.apiKey}`
-    }
-    return `${this.baseUrl}${func}&symbol=${symbol}&apikey=${this.apiKey}`
+  private makeUrl (symbol: string): string {
+    return `${this.baseUrl}TIME_SERIES_DAILY&symbol=${symbol}&outputsize=full&apikey=${this.apiKey}`
   }
 
   async fetchStockHistory (data: FetchStockHistoryData): Promise<null | StockHistory> {
-    const url = this.makeUrl('TIME_SERIES_DAILY', data.stockSymbol, 'full')
-    const response = await axios.get(url)
+    const response = await axios.get(this.makeUrl(data.stockSymbol))
     if (!AlphaVantageApiHelper.dataExist(response.data)) {
       return null
     }

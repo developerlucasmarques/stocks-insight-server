@@ -9,16 +9,12 @@ export class FetchManyStockQuotesAlphaVantageApi implements FetchManyStockQuotes
 
   constructor (private readonly apiKey: string) {}
 
-  private makeUrl (func: string, symbol: string, outputsize?: string): string {
-    if (outputsize) {
-      return `${this.baseUrl}${func}&symbol=${symbol}&outputsize=${outputsize}&apikey=${this.apiKey}`
-    }
-    return `${this.baseUrl}${func}&symbol=${symbol}&apikey=${this.apiKey}`
+  private makeUrl (symbol: string): string {
+    return `${this.baseUrl}GLOBAL_QUOTE&symbol=${symbol}&apikey=${this.apiKey}`
   }
 
   private async fetchStockQuote (stockSymbol: string): Promise<null | StockQuote > {
-    const url = this.makeUrl('GLOBAL_QUOTE', stockSymbol)
-    const response = await axios.get(url)
+    const response = await axios.get(this.makeUrl(stockSymbol))
     if (!AlphaVantageApiHelper.dataExist(response.data)) {
       return null
     }
