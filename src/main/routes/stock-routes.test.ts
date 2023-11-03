@@ -30,28 +30,28 @@ describe('Stock Routes', () => {
   it('Should return 200 if StockQuote on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA']))
     await request(app)
-      .get('/stock/AAPL/quote')
+      .get('/stock/aapl/quote')
       .expect(200)
   })
 
   it('Should return 200 if StockHistory on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA']))
     await request(app)
-      .get('/stocks/AAPL/history?from=2023-01-02&to=2023-01-03')
+      .get('/stocks/aapl/history?from=2023-01-02&to=2023-01-03')
       .expect(200)
   })
 
   it('Should return 200 if StockComparison on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL', 'TSLA', 'AMZN']))
     await request(app)
-      .get('/stocks/AAPL/compare?stocksToCompare[]=TSLA&stocksToCompare[]=AMZN')
+      .get('/stocks/aapl/compare?stocksToCompare[]=tsla&stocksToCompare[]=AMZN')
       .expect(200)
   })
 
   it('Should return 200 if StockGains on success', async () => {
     await redis.set('stockSymbols', JSON.stringify(['AAPL']))
     await request(app)
-      .get('/stocks/AAPL/gains?purchasedAt=2023-01-03&purchasedAmount=10000')
+      .get('/stocks/aapl/gains?purchasedAt=2023-01-03&purchasedAmount=10000')
       .expect(200)
   })
 })
