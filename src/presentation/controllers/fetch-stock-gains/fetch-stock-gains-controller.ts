@@ -1,30 +1,22 @@
 import type { FetchStockGains } from '@/domain/contracts'
 import type { Controller, Validation } from '@/presentation/contracts'
+import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
 import { InvalidPurchasedAmountError } from '@/presentation/errors'
 import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
-import type { HttpRequest, HttpResponse } from '@/presentation/http-types/http'
-import type { Either } from '@/shared/either'
 
 export class FetchStockGainsController implements Controller {
   constructor (
-    private readonly paramsValidation: Validation,
-    private readonly queryValidation: Validation,
+    private readonly validation: Validation,
     private readonly fetchStockGains: FetchStockGains
   ) {}
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const validations: Array<Either<Error, null>> = [
-        await this.paramsValidation.validate(httpRequest.params),
-        await this.queryValidation.validate(httpRequest.query)
-      ]
-      for (const validation of validations) {
-        if (validation.isLeft()) {
-          return badRequest(validation.value)
-        }
+      const validationResult = await this.validation.validate(httpRequest.params)
+      if (validationResult.isLeft()) {
+        return badRequest(validationResult.value)
       }
-      const { stockSymbol } = httpRequest.params
-      const { purchasedAt, purchasedAmount } = httpRequest.query
+      const { stockSymbol, purchasedAt, purchasedAmount } = httpRequest.params
       if (Number(purchasedAmount) <= 0) {
         return badRequest(new InvalidPurchasedAmountError())
       }
