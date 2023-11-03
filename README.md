@@ -2,7 +2,7 @@
 
 ## Descrição
 
-O Stock Insight é um backend desenvolvido para teste de uma vaga onde o requisito era desenvolver um sitema em Node para uma corretora de ações. Permitindo investidores avaliem o desempenho de ações em vários cenários. Este backend oferece funcionalidades para obter informações sobre o preço atual, preço histórico, comparação de preços com outras ações e projeção de ganhos com a compra em uma data específica.
+Stock Insight é um sistema backend desenvolvido em teste para uma vaga de desenvolvedor Node onde o requisito era desenvolver uma API em Node para uma corretora de ações. Permitindo investidores avaliem o desempenho de ações em vários cenários. Este backend oferece funcionalidades para obter informações sobre o preço atual, preço histórico, comparação de preços com outras ações e projeção de ganhos com a compra em uma data específica.
 
 
 ## Requisitos Técnicos
