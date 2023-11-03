@@ -1,5 +1,6 @@
 import type { FetchAllSymbolsOfListedStocksApi } from '@/interactions/contracts/api'
 import axios from 'axios'
+import { AlphaVantageApiHelper } from '../../helpers/alpha-vantage-api-helper'
 
 export class FetchAllSymbolsOfListedStocksAlphaVantageApi implements FetchAllSymbolsOfListedStocksApi {
   private readonly baseUrl = 'https://www.alphavantage.co/query?function='
@@ -11,7 +12,11 @@ export class FetchAllSymbolsOfListedStocksAlphaVantageApi implements FetchAllSym
   }
 
   async fetchAll (): Promise<string[]> {
-    await axios.get(this.makeUrl())
+    const response = await axios.get(this.makeUrl())
+    if (!response.data) {
+      return []
+    }
+    AlphaVantageApiHelper.reachedTheLimit(response.data)
     return []
   }
 }
