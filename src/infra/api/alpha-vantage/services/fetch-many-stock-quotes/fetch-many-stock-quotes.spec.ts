@@ -64,7 +64,7 @@ const makeSut = (): FetchManyStockQuotesAlphaVantageApi => {
 
 let axiosMock: MockAdapter
 
-describe('AlphaVantageApi', () => {
+describe('FetchManyStockQuotes AlphaVantageApi', () => {
   beforeAll(() => {
     axiosMock = new MockAdapter(axios)
   })
