@@ -4,7 +4,6 @@ dotenv.config()
 
 export default {
   alphaVantageApiKey: process.env.ALPHA_VANTAGE_API_KEY ?? '',
-  eodhdApiToken: process.env.EODHD_API_TOKEN ?? '',
 
   mongoUrl: process.env.MONGO_URL ?? 'mongodb://127.0.0.1:27017/stocks-insight',
 

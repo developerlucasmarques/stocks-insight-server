@@ -35,7 +35,6 @@ services:
     ports:
       - ${SERVER_PORT}:5050
     environment:
-      - EODHD_API_TOKEN=${EODHD_API_TOKEN}
       - ALPHA_VANTAGE_API_KEY=${ALPHA_VANTAGE_API_KEY}
       - MONGO_URL=${MONGO_URL}
       - REDIS_PASSWORD=${REDIS_PASSWORD}
