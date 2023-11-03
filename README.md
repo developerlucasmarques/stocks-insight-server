@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Stock Insight é um sistema backend desenvolvido em teste para uma vaga de desenvolvedor Node onde o requisito era desenvolver uma API em Node para uma corretora de ações. Permitindo investidores avaliem o desempenho de ações em vários cenários. Este backend oferece funcionalidades para obter informações sobre o preço atual, preço histórico, comparação de preços com outras ações e projeção de ganhos com a compra em uma data específica.
+Stock Insight é um sistema backend desenvolvido em teste para uma vaga de desenvolvedor Node, onde o requisito era desenvolver uma API em Node para uma corretora de ações, permitindo investidores avaliem o desempenho de ações em vários cenários. Este backend oferece funcionalidades para obter informações sobre o preço atual, preço histórico, comparação de preços com outras ações e projeção de ganhos com a compra em uma data específica.
 
 
 ## Requisitos Técnicos
@@ -13,6 +13,7 @@ Stock Insight é um sistema backend desenvolvido em teste para uma vaga de desen
 - Uso da API Alpha Vantage para obter dados de ações.
 - Integração com um frontend de uma single-page application (SPA).
 - Tratamento de erros, com ênfase em casos que poderiam gerar erros ou duplicidades nos dados.
+
 
 ## Casos de Usos Construídos
 
@@ -31,9 +32,10 @@ Eles também mostram como as tarefas estão divididas em camadas, como a camada 
 
 Você pode consultá-los em [**Diagrams.drawio**](https://drive.google.com/file/d/15SF0pyGC29hgEsqEkcvuI9sPGfElF8Xt/view?usp=sharing)
 
-## Cache de Símbolos de Ações da Nasdaq
 
-Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automaticamente buscados na API AlphaVantage e salvos em no Redis. Essa iniciativa visa otimizar o uso dos recursos, diminuinto o tempo de validação em caso de símbolo de ação inexistente além de economizar requisições à API AlphaVantage quando buscado símbolos de ações inválidos.
+## Cache de Símbolos de Ações
+
+Ao iniciar o servidor, todos símbolos das ações cotadas são automaticamente buscados na API AlphaVantage e salvos em no Redis. Essa iniciativa visa otimizar o uso dos recursos, diminuinto o tempo de validação em caso de símbolo de ação inexistente além de economizar requisições à API AlphaVantage quando buscado símbolos de ações inválidos.
 
 - **Inicialização do Servidor**: Ao iniciar o servidor, uma tarefa de busca é acionada para recuperar todas as ações cotadas na Nasdaq.
 
@@ -50,7 +52,7 @@ Ao iniciar o servidor, todos símbolos das ações cotadas na Nasdaq são automa
 
 ### Log de Erros:
 
-O design pattern Decorator foi utilizado para decorar as Factorys dos Controllers, que em caso de alguma exceção, registar a stack do erro no MongoDB. Isso envolve encapsular a execução dos controladores em classes decoradoras que capturam e registram exceções, incluindo data, nome do erro e a stack. Essa prática melhora a confiabilidade do sistema e oferece histórico detalhado de erros para análises e melhorias.
+O design pattern Decorator foi utilizado para decorar Controllers, que em caso de alguma exceção, registar o erro no MongoDB. Isso envolve encapsular a execução dos controladores em uma classe decoradora que capturam e registram exceções, incluindo data, nome do erro e a stack. Essa prática melhora a confiabilidade do sistema e oferece histórico detalhado de erros para análises e melhorias.
 
 
 ## Princípios
@@ -114,6 +116,7 @@ O design pattern Decorator foi utilizado para decorar as Factorys dos Controller
 - Ioredis Mock
 - Redis Memory Server
 - Git Commit Msg Linter
+- Rimraf
 - Module Alias
 
 
@@ -165,6 +168,7 @@ O design pattern Decorator foi utilizado para decorar as Factorys dos Controller
 - Collections
 - InsertOne
 - ObjectId
+
 
 ## Pré-requisitos
 
