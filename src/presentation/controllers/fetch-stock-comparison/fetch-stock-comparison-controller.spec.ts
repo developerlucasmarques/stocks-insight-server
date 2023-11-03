@@ -1,17 +1,15 @@
 import type { FetchStockComparison, FetchStockComparisonData, FetchStockComparisonResponse } from '@/domain/contracts'
-import { NoStockQuoteFoundError } from '@/domain/errors'
 import type { StockComparison } from '@/domain/models/stock-comparison'
 import type { Validation } from '@/presentation/contracts'
-import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import type { HttpRequest } from '@/presentation/http-types/http'
-import { left, right, type Either } from '@/shared/either'
+import { NoStockQuoteFoundError } from '@/domain/errors'
+import { badRequest, notFound, ok, serverError } from '@/presentation/helpers/http/http-helper'
 import { FetchStockComparisonController } from './fetch-stock-comparison-controller'
+import { left, right, type Either } from '@/shared/either'
 
 const makeFakeRequest = (): HttpRequest => ({
   params: {
-    stockSymbol: 'any_stock_symbol'
-  },
-  query: {
+    stockSymbol: 'any_stock_symbol',
     stocksToCompare: ['another_stock', 'other_stock']
   }
 })
@@ -28,22 +26,13 @@ const makeFakeStockComparison = (): StockComparison => ({
   }]
 })
 
-const makeParamsValidation = (): Validation => {
-  class ParamsValidationStub implements Validation {
+const makeValidation = (): Validation => {
+  class ValdationStub implements Validation {
     async validate (input: any): Promise<Either<Error, null>> {
       return await Promise.resolve(right(null))
     }
   }
-  return new ParamsValidationStub()
-}
-
-const makeQueryValidation = (): Validation => {
-  class QueryValidationStub implements Validation {
-    async validate (input: any): Promise<Either<Error, null>> {
-      return await Promise.resolve(right(null))
-    }
-  }
-  return new QueryValidationStub()
+  return new ValdationStub()
 }
 
 const makeFetchStockComparison = (): FetchStockComparison => {
@@ -57,68 +46,39 @@ const makeFetchStockComparison = (): FetchStockComparison => {
 
 type SutTypes = {
   sut: FetchStockComparisonController
-  paramsValidationStub: Validation
-  queryValidationStub: Validation
+  validationStub: Validation
   fetchStockComparisonStub: FetchStockComparison
 }
 
 const makeSut = (): SutTypes => {
-  const paramsValidationStub = makeParamsValidation()
-  const queryValidationStub = makeQueryValidation()
+  const validationStub = makeValidation()
   const fetchStockComparisonStub = makeFetchStockComparison()
-  const sut = new FetchStockComparisonController(
-    paramsValidationStub, queryValidationStub, fetchStockComparisonStub
-  )
+  const sut = new FetchStockComparisonController(validationStub, fetchStockComparisonStub)
   return {
-    sut, paramsValidationStub, queryValidationStub, fetchStockComparisonStub
+    sut, validationStub, fetchStockComparisonStub
   }
 }
 
 describe('FetchStockComparison Controller', () => {
-  it('Should call Params Validation with correct value', async () => {
-    const { sut, paramsValidationStub } = makeSut()
-    const validateSpy = jest.spyOn(paramsValidationStub, 'validate')
+  it('Should call Validation with correct value', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
     await sut.handle(makeFakeRequest())
-    expect(validateSpy).toHaveBeenCalledWith({ stockSymbol: 'any_stock_symbol' })
+    expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().params)
   })
 
-  it('Should return 400 if Params Validation fails', async () => {
-    const { sut, paramsValidationStub } = makeSut()
-    jest.spyOn(paramsValidationStub, 'validate').mockReturnValueOnce(
+  it('Should return 400 if Validation fails', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
       Promise.resolve(left(new Error('any_message')))
     )
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new Error('any_message')))
   })
 
-  it('Should return 500 if Params Validation throws', async () => {
-    const { sut, paramsValidationStub } = makeSut()
-    jest.spyOn(paramsValidationStub, 'validate').mockReturnValueOnce(
-      Promise.reject(new Error())
-    )
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new Error()))
-  })
-
-  it('Should call Query Validation with correct values', async () => {
-    const { sut, queryValidationStub } = makeSut()
-    const validateSpy = jest.spyOn(queryValidationStub, 'validate')
-    await sut.handle(makeFakeRequest())
-    expect(validateSpy).toHaveBeenCalledWith(makeFakeRequest().query)
-  })
-
-  it('Should return 400 if Query Validation fails', async () => {
-    const { sut, queryValidationStub } = makeSut()
-    jest.spyOn(queryValidationStub, 'validate').mockReturnValueOnce(
-      Promise.resolve(left(new Error('any_message')))
-    )
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(badRequest(new Error('any_message')))
-  })
-
-  it('Should return 500 if Query Validation throws', async () => {
-    const { sut, queryValidationStub } = makeSut()
-    jest.spyOn(queryValidationStub, 'validate').mockReturnValueOnce(
+  it('Should return 500 if Validation throws', async () => {
+    const { sut, validationStub } = makeSut()
+    jest.spyOn(validationStub, 'validate').mockReturnValueOnce(
       Promise.reject(new Error())
     )
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -139,8 +99,10 @@ describe('FetchStockComparison Controller', () => {
     const { sut, fetchStockComparisonStub } = makeSut()
     const performSpy = jest.spyOn(fetchStockComparisonStub, 'perform')
     await sut.handle({
-      params: { stockSymbol: 'any_stock_symbol' },
-      query: { stocksToCompare: 'another_stock' }
+      params: {
+        stockSymbol: 'any_stock_symbol',
+        stocksToCompare: 'another_stock'
+      }
     })
     expect(performSpy).toHaveBeenCalledWith({
       stockSymbol: 'any_stock_symbol',
