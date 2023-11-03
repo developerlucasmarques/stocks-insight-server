@@ -1,6 +1,6 @@
 import type { StockQuote } from '@/domain/models/stock-quote'
 import type { GlobalStockQuote } from '../../types'
-import { FetchManyStockQuotesAlphaVantageApi } from './fetch-many-stock-quotes'
+import { FetchManyStockQuotesAlphaVantageApi } from './fetch-many-stock-quotes-alpha-vantage-api'
 import { MaximumLimitReachedError } from '../../errors/maximun-limit-reached-error'
 import MockAdapter from 'axios-mock-adapter'
 import axios from 'axios'
